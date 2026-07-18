@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import TarjetaAnimal from '@/components/TarjetaAnimal';
 import ModalAnimal from '@/components/ModalAnimal';
+import { COLORES, SEXOS } from '@/lib/opciones';
 
 export default function Home() {
   const [animales, setAnimales] = useState([]);
@@ -14,6 +15,8 @@ export default function Home() {
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [filtroZona, setFiltroZona] = useState('');
+  const [filtroColor, setFiltroColor] = useState('todos');
+  const [filtroSexo, setFiltroSexo] = useState('todos');
 
   useEffect(() => {
     async function cargar() {
@@ -39,6 +42,8 @@ export default function Home() {
     if (filtroTipo !== 'todos' && a.tipo !== filtroTipo) return false;
     if (filtroEstado !== 'todos' && a.estado !== filtroEstado) return false;
     if (filtroZona && a.zona !== filtroZona) return false;
+    if (filtroColor !== 'todos' && a.color !== filtroColor) return false;
+    if (filtroSexo !== 'todos' && a.sexo !== filtroSexo) return false;
     return true;
   });
 
@@ -70,6 +75,26 @@ export default function Home() {
             <option value="">Todas</option>
             {zonas.map((z) => (
               <option key={z} value={z}>{z}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="campo-filtro">
+          <label>Color</label>
+          <select value={filtroColor} onChange={(e) => setFiltroColor(e.target.value)}>
+            <option value="todos">Todos</option>
+            {COLORES.map((c) => (
+              <option key={c.valor} value={c.valor}>{c.valor}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="campo-filtro">
+          <label>Sexo</label>
+          <select value={filtroSexo} onChange={(e) => setFiltroSexo(e.target.value)}>
+            <option value="todos">Todos</option>
+            {SEXOS.map((s) => (
+              <option key={s} value={s}>{s}</option>
             ))}
           </select>
         </div>

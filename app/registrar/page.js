@@ -3,15 +3,31 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { SEXOS, SENAS } from '@/lib/opciones';
+import SelectorColor from '@/components/SelectorColor';
 
 export default function Registrar() {
   const router = useRouter();
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState(null);
   const [foto, setFoto] = useState(null);
+  const [senasElegidas, setSenasElegidas] = useState([]);
+  const [color, setColor] = useState('');
+
+  function alternarSena(sena) {
+    setSenasElegidas((prev) =>
+      prev.includes(sena) ? prev.filter((s) => s !== sena) : [...prev, sena]
+    );
+  }
 
   async function manejarEnvio(e) {
     e.preventDefault();
+
+    if (!color) {
+      setMensaje({ tipo: 'error', texto: 'Elige el color/patrón de pelaje que más se parece.' });
+      return;
+    }
+
     setEnviando(true);
     setMensaje(null);
 
@@ -19,12 +35,14 @@ export default function Registrar() {
     const datos = {
       nombre: form.get('nombre'),
       tipo: form.get('tipo'),
-      color: form.get('color'),
+      color,
       tamano: form.get('tamano'),
+      sexo: form.get('sexo'),
       zona: form.get('zona'),
       estado: form.get('estado'),
       descripcion: form.get('descripcion'),
       contacto: form.get('contacto'),
+      senas: senasElegidas,
     };
 
     try {
@@ -86,24 +104,49 @@ export default function Registrar() {
         </div>
       </div>
 
+      <div className="campo">
+        <label>Color / patrón de pelaje</label>
+        <SelectorColor valor={color} onChange={setColor} />
+      </div>
+
+      <div className="campo">
+        <label>Tamaño</label>
+        <select name="tamano" defaultValue="mediano">
+          <option value="pequeño">Pequeño</option>
+          <option value="mediano">Mediano</option>
+          <option value="grande">Grande</option>
+        </select>
+      </div>
+
       <div className="fila-doble">
         <div className="campo">
-          <label>Color</label>
-          <input name="color" type="text" placeholder="Ej. marrón y blanco" />
+          <label>Sexo</label>
+          <select name="sexo" defaultValue="No se sabe">
+            {SEXOS.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
         </div>
         <div className="campo">
-          <label>Tamaño</label>
-          <select name="tamano" defaultValue="mediano">
-            <option value="pequeño">Pequeño</option>
-            <option value="mediano">Mediano</option>
-            <option value="grande">Grande</option>
-          </select>
+          <label>Zona / barrio donde se vio</label>
+          <input name="zona" type="text" required placeholder="Ej. Miraflores" />
         </div>
       </div>
 
       <div className="campo">
-        <label>Zona / barrio donde se vio</label>
-        <input name="zona" type="text" required placeholder="Ej. Miraflores" />
+        <label>Señas particulares (marca las que apliquen)</label>
+        <div className="grupo-casillas">
+          {SENAS.map((sena) => (
+            <label key={sena} className="casilla">
+              <input
+                type="checkbox"
+                checked={senasElegidas.includes(sena)}
+                onChange={() => alternarSena(sena)}
+              />
+              {sena}
+            </label>
+          ))}
+        </div>
       </div>
 
       <div className="campo">

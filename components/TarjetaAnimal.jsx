@@ -1,7 +1,11 @@
+import { buscarColor } from '@/lib/opciones';
+import MuestraColor from './MuestraColor';
+
 export default function TarjetaAnimal({ animal, onClick }) {
   const fecha = animal.creado_en
     ? new Date(animal.creado_en).toLocaleDateString('es', { day: '2-digit', month: 'short' })
     : '';
+  const colorInfo = buscarColor(animal.color);
 
   return (
     <article className="tarjeta" onClick={onClick} role="button" tabIndex={0}>
@@ -18,7 +22,10 @@ export default function TarjetaAnimal({ animal, onClick }) {
 
       <h3 className="nombre-animal">{animal.nombre || animal.tipo}</h3>
       <p className="meta-animal">
-        {animal.tipo} · {animal.color || 'color no especificado'} · {animal.tamano || 'tamaño no especificado'}
+        {animal.tipo} ·{' '}
+        {colorInfo && <MuestraColor color={colorInfo} tamano="13px" />}{' '}
+        {animal.color || 'color no especificado'} · {animal.tamano || 'tamaño no especificado'}
+        {animal.sexo ? ` · ${animal.sexo}` : ''}
         <br />
         Zona: {animal.zona}
         {animal.descripcion ? <><br />{animal.descripcion}</> : null}

@@ -1,3 +1,6 @@
+import { buscarColor } from '@/lib/opciones';
+import MuestraColor from './MuestraColor';
+
 export default function ModalAnimal({ animal, onClose }) {
   const fecha = animal.creado_en
     ? new Date(animal.creado_en).toLocaleDateString('es', {
@@ -6,6 +9,8 @@ export default function ModalAnimal({ animal, onClose }) {
         year: 'numeric',
       })
     : '';
+
+  const colorInfo = buscarColor(animal.color);
 
   return (
     <div className="fondo-modal" onClick={onClose}>
@@ -35,11 +40,18 @@ export default function ModalAnimal({ animal, onClose }) {
           </div>
           <div className="detalle-fila">
             <dt>Color</dt>
-            <dd>{animal.color || 'No especificado'}</dd>
+            <dd className="detalle-color">
+              {colorInfo && <MuestraColor color={colorInfo} />}
+              {animal.color || 'No especificado'}
+            </dd>
           </div>
           <div className="detalle-fila">
             <dt>Tamaño</dt>
             <dd>{animal.tamano || 'No especificado'}</dd>
+          </div>
+          <div className="detalle-fila">
+            <dt>Sexo</dt>
+            <dd>{animal.sexo || 'No se sabe'}</dd>
           </div>
           <div className="detalle-fila">
             <dt>Zona</dt>
@@ -50,6 +62,17 @@ export default function ModalAnimal({ animal, onClose }) {
             <dd>{fecha}</dd>
           </div>
         </dl>
+
+        {animal.senas && animal.senas.length > 0 && (
+          <>
+            <p className="detalle-etiqueta">Señas particulares</p>
+            <ul className="lista-senas">
+              {animal.senas.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </>
+        )}
 
         {animal.descripcion && (
           <>

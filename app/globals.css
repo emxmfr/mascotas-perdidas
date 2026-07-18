@@ -386,6 +386,12 @@ a {
   text-align: right;
 }
 
+.detalle-color {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .detalle-etiqueta {
   font-size: 11px;
   text-transform: uppercase;
@@ -409,4 +415,98 @@ a {
   padding: 6px 10px;
   border-radius: var(--radius);
   margin: 0;
+}
+
+.grupo-casillas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+  background: #fff;
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.casilla {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.casilla input {
+  margin-top: 2px;
+}
+
+.lista-senas {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.selector-color {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  background: #fff;
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius);
+  padding: 10px;
+}
+
+.opcion-color {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius);
+  background: #fdfcf9;
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--ink);
+  text-align: left;
+}
+
+.opcion-color:hover {
+  border-color: var(--ink-soft);
+}
+
+.opcion-color.elegida {
+  border-color: var(--pin-red);
+  background: #fbe9e7;
+  box-shadow: 0 0 0 1px var(--pin-red);
+}
+
+.muestra-color {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.25);
+  display: inline-block;
+}
+
+.muestra-otro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eee7d6;
+  color: var(--ink-soft);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .selector-color { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .grupo-casillas { grid-template-columns: 1fr; }
 }

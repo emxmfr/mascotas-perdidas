@@ -1,10 +1,10 @@
-export default function TarjetaAnimal({ animal }) {
+export default function TarjetaAnimal({ animal, onClick }) {
   const fecha = animal.creado_en
     ? new Date(animal.creado_en).toLocaleDateString('es', { day: '2-digit', month: 'short' })
     : '';
 
   return (
-    <article className="tarjeta">
+    <article className="tarjeta" onClick={onClick} role="button" tabIndex={0}>
       <div className="chincheta" />
       <span className={`etiqueta-estado ${animal.estado}`}>
         {animal.estado === 'encontrado' ? 'Encontrado' : 'Perdido'}

@@ -154,6 +154,12 @@ a {
   box-shadow: 0 10px 18px rgba(0,0,0,0.28);
   border-radius: var(--radius);
   transform: rotate(var(--giro, -1deg));
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.tarjeta:hover {
+  transform: rotate(var(--giro, -1deg)) translateY(-3px);
 }
 
 .tarjeta:nth-child(3n) { --giro: 1.2deg; }
@@ -310,4 +316,97 @@ a {
 
 @media (max-width: 480px) {
   .fila-doble { grid-template-columns: 1fr; }
+}
+
+.fondo-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 14, 8, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.tarjeta-modal {
+  position: relative;
+  background: var(--paper);
+  border-radius: var(--radius);
+  padding: 22px 22px 26px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.cerrar-modal {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.foto-modal {
+  aspect-ratio: 4 / 3;
+  margin-top: 8px;
+}
+
+.detalle-lista {
+  margin: 14px 0;
+  display: grid;
+  gap: 6px;
+}
+
+.detalle-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  border-bottom: 1px dashed var(--paper-shadow);
+  padding-bottom: 4px;
+}
+
+.detalle-fila dt {
+  color: var(--ink-soft);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+
+.detalle-fila dd {
+  margin: 0;
+  text-align: right;
+}
+
+.detalle-etiqueta {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin: 14px 0 4px;
+}
+
+.detalle-descripcion {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.detalle-contacto {
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  background: #eee7d6;
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  margin: 0;
 }

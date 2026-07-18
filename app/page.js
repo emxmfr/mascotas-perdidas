@@ -3,11 +3,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import TarjetaAnimal from '@/components/TarjetaAnimal';
+import ModalAnimal from '@/components/ModalAnimal';
 
 export default function Home() {
   const [animales, setAnimales] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [seleccionado, setSeleccionado] = useState(null);
 
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroEstado, setFiltroEstado] = useState('todos');
@@ -81,9 +83,17 @@ export default function Home() {
 
       <div className="rejilla">
         {filtrados.map((animal) => (
-          <TarjetaAnimal key={animal.id} animal={animal} />
+          <TarjetaAnimal
+            key={animal.id}
+            animal={animal}
+            onClick={() => setSeleccionado(animal)}
+          />
         ))}
       </div>
+
+      {seleccionado && (
+        <ModalAnimal animal={seleccionado} onClose={() => setSeleccionado(null)} />
+      )}
     </>
   );
 }

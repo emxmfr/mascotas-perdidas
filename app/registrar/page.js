@@ -3,16 +3,24 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { SEXOS, SENAS } from '@/lib/opciones';
+import { SEXOS, SENAS, generarCodigo } from '@/lib/opciones';
 import SelectorColor from '@/components/SelectorColor';
+
+const MAX_FOTOS = 3;
 
 export default function Registrar() {
   const router = useRouter();
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState(null);
-  const [foto, setFoto] = useState(null);
+  const [fotos, setFotos] = useState([]);
   const [senasElegidas, setSenasElegidas] = useState([]);
   const [color, setColor] = useState('');
+  const [codigoGenerado, setCodigoGenerado] = useState(null);
+
+  function elegirFotos(lista) {
+    const archivos = Array.from(lista).slice(0, MAX_FOTOS);
+    setFotos(archivos);
+  }
 
   function alternarSena(sena) {
     setSenasElegidas((prev) =>
@@ -32,6 +40,7 @@ export default function Registrar() {
     setMensaje(null);
 
     const form = new FormData(e.target);
+    const codigo = generarCodigo();
     const datos = {
       nombre: form.get('nombre'),
       tipo: form.get('tipo'),
@@ -43,36 +52,59 @@ export default function Registrar() {
       descripcion: form.get('descripcion'),
       contacto: form.get('contacto'),
       senas: senasElegidas,
+      codigo_edicion: codigo,
     };
 
     try {
-      let foto_url = null;
+      const urls = [];
 
-      if (foto) {
-        const nombreArchivo = `${Date.now()}-${foto.name}`;
+      for (const archivo of fotos) {
+        const nombreArchivo = `${Date.now()}-${archivo.name}`;
         const { error: errorSubida } = await supabase.storage
           .from('fotos')
-          .upload(nombreArchivo, foto);
+          .upload(nombreArchivo, archivo);
 
         if (errorSubida) throw errorSubida;
 
         const { data } = supabase.storage.from('fotos').getPublicUrl(nombreArchivo);
-        foto_url = data.publicUrl;
+        urls.push(data.publicUrl);
       }
 
       const { error: errorInsert } = await supabase
         .from('animales')
-        .insert([{ ...datos, foto_url }]);
+        .insert([{ ...datos, foto_url: urls[0] || null, foto_urls: urls }]);
 
       if (errorInsert) throw errorInsert;
 
-      setMensaje({ tipo: 'ok', texto: 'Caso registrado. Redirigiendo al tablón...' });
-      setTimeout(() => router.push('/'), 1200);
+      setCodigoGenerado(codigo);
+      setMensaje({ tipo: 'ok', texto: 'Caso registrado correctamente.' });
     } catch (err) {
       setMensaje({ tipo: 'error', texto: 'Algo falló al registrar el caso. Revisa los datos e intenta de nuevo.' });
     } finally {
       setEnviando(false);
     }
+  }
+
+  if (codigoGenerado) {
+    return (
+      <div className="formulario" style={{ textAlign: 'center' }}>
+        <h2 className="nombre-animal" style={{ fontSize: 22 }}>¡Caso registrado!</h2>
+        <p style={{ fontSize: 14, marginTop: 10 }}>
+          Guarda este código: lo vas a necesitar para actualizar el estado de este caso
+          más adelante (por ejemplo, cuando lo encuentren o regrese a casa).
+        </p>
+        <p className="detalle-contacto" style={{ fontSize: 22, letterSpacing: 2, margin: '16px auto' }}>
+          {codigoGenerado}
+        </p>
+        <p style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>
+          También puedes encontrar este código si guardas una captura de esta pantalla.
+          Si lo pierdes, contáctanos para verificar el caso de otra forma.
+        </p>
+        <button className="boton-poster rojo" onClick={() => router.push('/')} style={{ marginTop: 14 }}>
+          Ir al tablón
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -160,12 +192,16 @@ export default function Registrar() {
       </div>
 
       <div className="campo">
-        <label>Foto</label>
+        <label>Fotos (hasta {MAX_FOTOS})</label>
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setFoto(e.target.files?.[0] || null)}
+          multiple
+          onChange={(e) => elegirFotos(e.target.files)}
         />
+        {fotos.length > 0 && (
+          <p className="ayuda-fotos">{fotos.length} foto{fotos.length > 1 ? 's' : ''} seleccionada{fotos.length > 1 ? 's' : ''}</p>
+        )}
       </div>
 
       <button className="boton-poster rojo" type="submit" disabled={enviando} style={{ width: '100%', marginTop: 6 }}>

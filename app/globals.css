@@ -194,6 +194,7 @@ a {
 
 .etiqueta-estado.perdido { background: var(--pin-red); }
 .etiqueta-estado.encontrado { background: var(--pin-teal); }
+.etiqueta-estado.en_casa { background: #4a7a3d; }
 
 .foto-animal {
   width: 100%;
@@ -386,10 +387,110 @@ a {
   text-align: right;
 }
 
+.ayuda-fotos {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin: 6px 0 0;
+}
+
 .detalle-color {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.contador-fotos {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+.banner-estadistica {
+  background: var(--tape);
+  color: var(--ink);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.carrusel {
+  position: relative;
+}
+
+.flecha-carrusel {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.flecha-carrusel.izquierda { left: 8px; }
+.flecha-carrusel.derecha { right: 8px; }
+
+.puntos-carrusel {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 2;
+}
+
+.punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.55);
+}
+
+.punto.activo {
+  background: #fff;
+}
+
+.bloque-estado {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--paper-shadow);
+}
+
+.form-estado {
+  background: #fff;
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.fila-codigo {
+  display: flex;
+  gap: 8px;
+}
+
+.fila-codigo input {
+  flex: 1;
+  padding: 9px 10px;
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius);
+  font-size: 14px;
+  text-transform: uppercase;
 }
 
 .detalle-etiqueta {

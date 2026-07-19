@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import TarjetaAnimal from '@/components/TarjetaAnimal';
 import ModalAnimal from '@/components/ModalAnimal';
-import { COLORES, SEXOS } from '@/lib/opciones';
+import { COLORES, SEXOS, ESTADOS } from '@/lib/opciones';
+import Estadisticas from '@/components/Estadisticas';
 
 export default function Home() {
   const [animales, setAnimales] = useState([]);
@@ -49,6 +50,8 @@ export default function Home() {
 
   return (
     <>
+      <Estadisticas />
+
       <div className="panel-filtros">
         <div className="campo-filtro">
           <label>Tipo de animal</label>
@@ -64,8 +67,9 @@ export default function Home() {
           <label>Estado</label>
           <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
             <option value="todos">Todos</option>
-            <option value="perdido">Perdido</option>
-            <option value="encontrado">Encontrado</option>
+            {ESTADOS.map((e) => (
+              <option key={e.valor} value={e.valor}>{e.etiqueta}</option>
+            ))}
           </select>
         </div>
 
@@ -117,7 +121,14 @@ export default function Home() {
       </div>
 
       {seleccionado && (
-        <ModalAnimal animal={seleccionado} onClose={() => setSeleccionado(null)} />
+        <ModalAnimal
+          animal={seleccionado}
+          onClose={() => setSeleccionado(null)}
+          onActualizado={(actualizado) => {
+            setAnimales((prev) => prev.map((a) => (a.id === actualizado.id ? actualizado : a)));
+            setSeleccionado(actualizado);
+          }}
+        />
       )}
     </>
   );

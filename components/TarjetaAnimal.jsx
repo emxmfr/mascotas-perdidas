@@ -1,4 +1,4 @@
-import { buscarColor } from '@/lib/opciones';
+import { buscarColor, etiquetaEstado } from '@/lib/opciones';
 import MuestraColor from './MuestraColor';
 
 export default function TarjetaAnimal({ animal, onClick }) {
@@ -6,16 +6,20 @@ export default function TarjetaAnimal({ animal, onClick }) {
     ? new Date(animal.creado_en).toLocaleDateString('es', { day: '2-digit', month: 'short' })
     : '';
   const colorInfo = buscarColor(animal.color);
+  const fotos = animal.foto_urls?.length ? animal.foto_urls : animal.foto_url ? [animal.foto_url] : [];
 
   return (
     <article className="tarjeta" onClick={onClick} role="button" tabIndex={0}>
       <div className="chincheta" />
       <span className={`etiqueta-estado ${animal.estado}`}>
-        {animal.estado === 'encontrado' ? 'Encontrado' : 'Perdido'}
+        {etiquetaEstado(animal.estado)}
       </span>
 
-      {animal.foto_url ? (
-        <img className="foto-animal" src={animal.foto_url} alt={animal.nombre || animal.tipo} />
+      {fotos.length > 0 ? (
+        <div style={{ position: 'relative' }}>
+          <img className="foto-animal" src={fotos[0]} alt={animal.nombre || animal.tipo} />
+          {fotos.length > 1 && <span className="contador-fotos">📷 {fotos.length}</span>}
+        </div>
       ) : (
         <div className="foto-vacia">Sin foto</div>
       )}

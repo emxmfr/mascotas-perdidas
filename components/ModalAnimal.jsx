@@ -1,16 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import { buscarColor, etiquetaEstado } from '@/lib/opciones';
 import MuestraColor from './MuestraColor';
+import Reportes from './Reportes';
 
-export default function ModalAnimal({ animal, onClose, onActualizado }) {
+export default function ModalAnimal({ animal, onClose }) {
   const [indiceFoto, setIndiceFoto] = useState(0);
-  const [mostrarForm, setMostrarForm] = useState(false);
-  const [codigo, setCodigo] = useState('');
-  const [enviando, setEnviando] = useState(false);
-  const [mensaje, setMensaje] = useState(null);
 
   const fecha = animal.creado_en
     ? new Date(animal.creado_en).toLocaleDateString('es', {
@@ -20,43 +16,8 @@ export default function ModalAnimal({ animal, onClose, onActualizado }) {
       })
     : '';
 
-  const colorInfo = buscarColor(animal.color);
+  const colores = animal.colores?.length ? animal.colores : animal.color ? [animal.color] : [];
   const fotos = animal.foto_urls?.length ? animal.foto_urls : animal.foto_url ? [animal.foto_url] : [];
-
-  const siguienteEstado = animal.estado === 'perdido' ? 'encontrado' : 'en_casa';
-  const textoBoton = animal.estado === 'perdido' ? 'Marcar como encontrado' : 'Marcar que regresó a casa';
-
-  async function confirmarCambioEstado() {
-    if (!codigo.trim()) {
-      setMensaje({ tipo: 'error', texto: 'Ingresa el código que se te dio al registrar el caso.' });
-      return;
-    }
-
-    setEnviando(true);
-    setMensaje(null);
-
-    const { data, error } = await supabase
-      .from('animales')
-      .update({ estado: siguienteEstado })
-      .eq('id', animal.id)
-      .eq('codigo_edicion', codigo.trim().toUpperCase())
-      .select();
-
-    setEnviando(false);
-
-    if (error) {
-      setMensaje({ tipo: 'error', texto: 'Algo falló al actualizar. Intenta de nuevo.' });
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      setMensaje({ tipo: 'error', texto: 'El código no coincide con este caso.' });
-      return;
-    }
-
-    setMensaje({ tipo: 'ok', texto: '¡Estado actualizado!' });
-    onActualizado?.({ ...animal, estado: siguienteEstado });
-  }
 
   return (
     <div className="fondo-modal" onClick={onClose}>
@@ -118,9 +79,17 @@ export default function ModalAnimal({ animal, onClose, onActualizado }) {
           <div className="detalle-fila">
             <dt>Color</dt>
             <dd className="detalle-color">
-              {colorInfo && <MuestraColor color={colorInfo} />}
-              {animal.color || 'No especificado'}
+              {colores.map((c) => {
+                const info = buscarColor(c);
+                return info ? <MuestraColor key={c} color={info} tamano="16px" /> : null;
+              })}
+              {colores.join(', ') || 'No especificado'}
+              {animal.color_otro ? ` (${animal.color_otro})` : ''}
             </dd>
+          </div>
+          <div className="detalle-fila">
+            <dt>Raza</dt>
+            <dd>{animal.raza || 'No se sabe'}</dd>
           </div>
           <div className="detalle-fila">
             <dt>Tamaño</dt>
@@ -159,44 +128,17 @@ export default function ModalAnimal({ animal, onClose, onActualizado }) {
         )}
 
         <p className="detalle-etiqueta">Contacto</p>
-        <p className="detalle-contacto">{animal.contacto}</p>
-
-        {animal.estado !== 'en_casa' && (
-          <div className="bloque-estado">
-            {!mostrarForm ? (
-              <button
-                type="button"
-                className="boton-poster"
-                onClick={() => setMostrarForm(true)}
-              >
-                {textoBoton}
-              </button>
-            ) : (
-              <div className="form-estado">
-                <p className="detalle-etiqueta" style={{ marginTop: 0 }}>
-                  ¿Es tu reporte? Ingresa el código que te dimos al registrarlo
-                </p>
-                {mensaje && <div className={`mensaje ${mensaje.tipo}`}>{mensaje.texto}</div>}
-                <div className="fila-codigo">
-                  <input
-                    type="text"
-                    placeholder="Ej. AB12CD"
-                    value={codigo}
-                    onChange={(e) => setCodigo(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    className="boton-poster rojo"
-                    onClick={confirmarCambioEstado}
-                    disabled={enviando}
-                  >
-                    {enviando ? 'Enviando...' : 'Confirmar'}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+        {animal.telefono && <p className="detalle-contacto">{animal.telefono}</p>}
+        {animal.contacto_otro && (
+          <p className="detalle-contacto" style={{ marginTop: 6 }}>{animal.contacto_otro}</p>
         )}
+        {!animal.telefono && !animal.contacto_otro && animal.contacto && (
+          <p className="detalle-contacto">{animal.contacto}</p>
+        )}
+
+        <div className="bloque-estado">
+          <Reportes animalId={animal.id} />
+        </div>
       </div>
     </div>
   );

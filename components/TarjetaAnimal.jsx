@@ -5,7 +5,7 @@ export default function TarjetaAnimal({ animal, onClick }) {
   const fecha = animal.creado_en
     ? new Date(animal.creado_en).toLocaleDateString('es', { day: '2-digit', month: 'short' })
     : '';
-  const colorInfo = buscarColor(animal.color);
+  const colores = animal.colores?.length ? animal.colores : animal.color ? [animal.color] : [];
   const fotos = animal.foto_urls?.length ? animal.foto_urls : animal.foto_url ? [animal.foto_url] : [];
 
   return (
@@ -27,8 +27,11 @@ export default function TarjetaAnimal({ animal, onClick }) {
       <h3 className="nombre-animal">{animal.nombre || animal.tipo}</h3>
       <p className="meta-animal">
         {animal.tipo} ·{' '}
-        {colorInfo && <MuestraColor color={colorInfo} tamano="13px" />}{' '}
-        {animal.color || 'color no especificado'} · {animal.tamano || 'tamaño no especificado'}
+        {colores.slice(0, 2).map((c) => {
+          const info = buscarColor(c);
+          return info ? <MuestraColor key={c} color={info} tamano="13px" /> : null;
+        })}{' '}
+        {colores.join(', ') || 'color no especificado'} · {animal.tamano || 'tamaño no especificado'}
         {animal.sexo ? ` · ${animal.sexo}` : ''}
         <br />
         Zona: {animal.zona}
@@ -37,7 +40,7 @@ export default function TarjetaAnimal({ animal, onClick }) {
 
       <div className="tiras">
         <span>{fecha}</span>
-        <span>{animal.contacto}</span>
+        <span>{animal.telefono || animal.contacto_otro || animal.contacto}</span>
       </div>
     </article>
   );

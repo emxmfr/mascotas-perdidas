@@ -43,7 +43,10 @@ export default function Home() {
     if (filtroTipo !== 'todos' && a.tipo !== filtroTipo) return false;
     if (filtroEstado !== 'todos' && a.estado !== filtroEstado) return false;
     if (filtroZona && a.zona !== filtroZona) return false;
-    if (filtroColor !== 'todos' && a.color !== filtroColor) return false;
+    if (filtroColor !== 'todos') {
+      const colores = a.colores?.length ? a.colores : a.color ? [a.color] : [];
+      if (!colores.includes(filtroColor)) return false;
+    }
     if (filtroSexo !== 'todos' && a.sexo !== filtroSexo) return false;
     return true;
   });
@@ -121,14 +124,7 @@ export default function Home() {
       </div>
 
       {seleccionado && (
-        <ModalAnimal
-          animal={seleccionado}
-          onClose={() => setSeleccionado(null)}
-          onActualizado={(actualizado) => {
-            setAnimales((prev) => prev.map((a) => (a.id === actualizado.id ? actualizado : a)));
-            setSeleccionado(actualizado);
-          }}
-        />
+        <ModalAnimal animal={seleccionado} onClose={() => setSeleccionado(null)} />
       )}
     </>
   );

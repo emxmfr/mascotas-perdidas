@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { SEXOS, SENAS, generarCodigo } from '@/lib/opciones';
+import { SEXOS, SENAS, RAZAS } from '@/lib/opciones';
 import SelectorColor from '@/components/SelectorColor';
 
 const MAX_FOTOS = 3;
@@ -14,13 +14,10 @@ export default function Registrar() {
   const [mensaje, setMensaje] = useState(null);
   const [fotos, setFotos] = useState([]);
   const [senasElegidas, setSenasElegidas] = useState([]);
-  const [color, setColor] = useState('');
-  const [codigoGenerado, setCodigoGenerado] = useState(null);
-
-  function elegirFotos(lista) {
-    const archivos = Array.from(lista).slice(0, MAX_FOTOS);
-    setFotos(archivos);
-  }
+  const [colores, setColores] = useState([]);
+  const [colorOtro, setColorOtro] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [contactoOtro, setContactoOtro] = useState('');
 
   function alternarSena(sena) {
     setSenasElegidas((prev) =>
@@ -28,11 +25,36 @@ export default function Registrar() {
     );
   }
 
+  function alternarColor(color) {
+    setColores((prev) =>
+      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
+    );
+  }
+
+  function elegirFotos(lista) {
+    const archivos = Array.from(lista).slice(0, MAX_FOTOS);
+    setFotos(archivos);
+  }
+
+  function manejarTelefono(valor) {
+    setTelefono(valor.replace(/\D/g, '').slice(0, 9));
+  }
+
   async function manejarEnvio(e) {
     e.preventDefault();
 
-    if (!color) {
-      setMensaje({ tipo: 'error', texto: 'Elige el color/patrón de pelaje que más se parece.' });
+    if (colores.length === 0) {
+      setMensaje({ tipo: 'error', texto: 'Elige al menos un color/patrón de pelaje.' });
+      return;
+    }
+
+    if (telefono && telefono.length !== 9) {
+      setMensaje({ tipo: 'error', texto: 'El teléfono debe tener 9 dígitos (Perú).' });
+      return;
+    }
+
+    if (!telefono && !contactoOtro.trim()) {
+      setMensaje({ tipo: 'error', texto: 'Deja al menos un dato de contacto: teléfono, email o red social.' });
       return;
     }
 
@@ -40,19 +62,21 @@ export default function Registrar() {
     setMensaje(null);
 
     const form = new FormData(e.target);
-    const codigo = generarCodigo();
     const datos = {
       nombre: form.get('nombre'),
       tipo: form.get('tipo'),
-      color,
+      colores,
+      color_otro: colorOtro.trim() || null,
+      raza: form.get('raza'),
       tamano: form.get('tamano'),
       sexo: form.get('sexo'),
       zona: form.get('zona'),
       estado: form.get('estado'),
       descripcion: form.get('descripcion'),
-      contacto: form.get('contacto'),
+      telefono: telefono || null,
+      contacto_otro: contactoOtro.trim() || null,
+      contacto: telefono || contactoOtro.trim(),
       senas: senasElegidas,
-      codigo_edicion: codigo,
     };
 
     try {
@@ -76,35 +100,13 @@ export default function Registrar() {
 
       if (errorInsert) throw errorInsert;
 
-      setCodigoGenerado(codigo);
-      setMensaje({ tipo: 'ok', texto: 'Caso registrado correctamente.' });
+      setMensaje({ tipo: 'ok', texto: 'Caso registrado. Redirigiendo al tablón...' });
+      setTimeout(() => router.push('/'), 1200);
     } catch (err) {
       setMensaje({ tipo: 'error', texto: 'Algo falló al registrar el caso. Revisa los datos e intenta de nuevo.' });
     } finally {
       setEnviando(false);
     }
-  }
-
-  if (codigoGenerado) {
-    return (
-      <div className="formulario" style={{ textAlign: 'center' }}>
-        <h2 className="nombre-animal" style={{ fontSize: 22 }}>¡Caso registrado!</h2>
-        <p style={{ fontSize: 14, marginTop: 10 }}>
-          Guarda este código: lo vas a necesitar para actualizar el estado de este caso
-          más adelante (por ejemplo, cuando lo encuentren o regrese a casa).
-        </p>
-        <p className="detalle-contacto" style={{ fontSize: 22, letterSpacing: 2, margin: '16px auto' }}>
-          {codigoGenerado}
-        </p>
-        <p style={{ fontSize: 12.5, color: 'var(--ink-soft)' }}>
-          También puedes encontrar este código si guardas una captura de esta pantalla.
-          Si lo pierdes, contáctanos para verificar el caso de otra forma.
-        </p>
-        <button className="boton-poster rojo" onClick={() => router.push('/')} style={{ marginTop: 14 }}>
-          Ir al tablón
-        </button>
-      </div>
-    );
   }
 
   return (
@@ -137,8 +139,22 @@ export default function Registrar() {
       </div>
 
       <div className="campo">
-        <label>Color / patrón de pelaje</label>
-        <SelectorColor valor={color} onChange={setColor} />
+        <label>Raza</label>
+        <select name="raza" defaultValue="No se sabe / mestizo">
+          {RAZAS.map((r) => (
+            <option key={r} value={r}>{r}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="campo">
+        <label>Color / patrón de pelaje (puedes elegir varios)</label>
+        <SelectorColor
+          valores={colores}
+          onToggle={alternarColor}
+          otroTexto={colorOtro}
+          onOtroTexto={setColorOtro}
+        />
       </div>
 
       <div className="campo">
@@ -183,12 +199,29 @@ export default function Registrar() {
 
       <div className="campo">
         <label>Descripción adicional</label>
-        <textarea name="descripcion" placeholder="Señas particulares, collar, comportamiento..." />
+        <textarea name="descripcion" placeholder="Comportamiento, dónde se le vio por última vez..." />
       </div>
 
-      <div className="campo">
-        <label>Contacto (teléfono o email)</label>
-        <input name="contacto" type="text" required placeholder="Ej. 999 999 999" />
+      <div className="fila-doble">
+        <div className="campo">
+          <label>Teléfono (Perú, 9 dígitos)</label>
+          <input
+            type="tel"
+            inputMode="numeric"
+            placeholder="9XXXXXXXX"
+            value={telefono}
+            onChange={(e) => manejarTelefono(e.target.value)}
+          />
+        </div>
+        <div className="campo">
+          <label>Email, Instagram o Facebook</label>
+          <input
+            type="text"
+            placeholder="Ej. @usuario o correo@ejemplo.com"
+            value={contactoOtro}
+            onChange={(e) => setContactoOtro(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="campo">

@@ -48,6 +48,27 @@ export default function MuestraColor({ color, tamano }) {
     );
   }
 
+  if (tipo === 'peluche') {
+    return (
+      <span
+        className="muestra-color"
+        style={{
+          background: `
+            radial-gradient(circle at 20% 20%, rgba(255,255,255,0.5) 0 3px, transparent 4px),
+            radial-gradient(circle at 55% 15%, rgba(255,255,255,0.5) 0 3px, transparent 4px),
+            radial-gradient(circle at 80% 30%, rgba(255,255,255,0.5) 0 3px, transparent 4px),
+            radial-gradient(circle at 30% 55%, rgba(255,255,255,0.5) 0 3px, transparent 4px),
+            radial-gradient(circle at 70% 65%, rgba(255,255,255,0.5) 0 3px, transparent 4px),
+            radial-gradient(circle at 45% 85%, rgba(255,255,255,0.5) 0 3px, transparent 4px),
+            radial-gradient(circle at 15% 80%, rgba(255,255,255,0.5) 0 3px, transparent 4px),
+            ${c1}
+          `,
+          ...estiloTamano,
+        }}
+      />
+    );
+  }
+
   return (
     <span className="muestra-color muestra-otro" style={estiloTamano}>?</span>
   );

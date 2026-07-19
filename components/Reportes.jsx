@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { TIPOS_REPORTE } from '@/lib/opciones';
 
-export default function Reportes({ animalId }) {
+export default function Reportes({ animalId, animalNombre }) {
   const [reportes, setReportes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
@@ -30,6 +30,32 @@ export default function Reportes({ animalId }) {
   useEffect(() => {
     cargarReportes();
   }, [animalId]);
+
+  async function notificarPorCorreo({ tipoReporte, mensajeTexto, contactoTexto, evidenciaUrl }) {
+    const clave = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
+    if (!clave) return;
+
+    try {
+      await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: clave,
+          subject: `Nuevo reporte: ${animalNombre || 'un caso'}`,
+          from_name: 'Mascotas Perdidas',
+          message:
+            `Caso: ${animalNombre || 'Sin nombre'}\n` +
+            `Tipo de reporte: ${tipoReporte === 'encontrado' ? 'Ya fue encontrado' : 'Avistamiento'}\n` +
+            `Mensaje: ${mensajeTexto}\n` +
+            `Contacto de quien reporta: ${contactoTexto || 'No dejó contacto'}\n` +
+            `Evidencia: ${evidenciaUrl || 'No adjuntó'}\n\n` +
+            `Entra al tablón y busca este caso para actualizar su estado.`,
+        }),
+      });
+    } catch {
+      // si falla el correo, no interrumpe el registro del reporte
+    }
+  }
 
   async function enviarReporte(e) {
     e.preventDefault();
@@ -66,6 +92,13 @@ export default function Reportes({ animalId }) {
       ]);
 
       if (error) throw error;
+
+      notificarPorCorreo({
+        tipoReporte: tipo,
+        mensajeTexto: mensaje.trim(),
+        contactoTexto: contacto.trim(),
+        evidenciaUrl: evidencia_url,
+      });
 
       setMensaje('');
       setContacto('');

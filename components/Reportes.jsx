@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { TIPOS_REPORTE } from '@/lib/opciones';
 
-export default function Reportes({ animalId, animalNombre }) {
+export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
   const [reportes, setReportes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
@@ -22,6 +22,7 @@ export default function Reportes({ animalId, animalNombre }) {
       .from('avistamientos')
       .select('*')
       .eq('animal_id', animalId)
+      .eq('tipo', 'avistamiento')
       .order('creado_en', { ascending: false });
     setReportes(data || []);
     setCargando(false);
@@ -41,7 +42,7 @@ export default function Reportes({ animalId, animalNombre }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: clave,
-          subject: `Nuevo reporte: ${animalNombre || 'un caso'}`,
+          subject: `${tipoReporte === 'encontrado' ? '✅ ENCONTRADO' : '👀 Avistamiento'}: ${animalNombre || 'un caso'}`,
           from_name: 'Mascotas Perdidas',
           message:
             `Caso: ${animalNombre || 'Sin nombre'}\n` +
@@ -100,12 +101,19 @@ export default function Reportes({ animalId, animalNombre }) {
         evidenciaUrl: evidencia_url,
       });
 
+      const esEncontrado = tipo === 'encontrado';
+
       setMensaje('');
       setContacto('');
       setEvidencia(null);
       setTipo('avistamiento');
       setMostrarForm(false);
-      setMensajeEstado({ tipo: 'ok', texto: '¡Gracias! Tu reporte se agregó al caso.' });
+      setMensajeEstado({
+        tipo: 'ok',
+        texto: esEncontrado
+          ? '¡Gracias! Se lo notificamos directamente al equipo para que lo confirme.'
+          : '¡Gracias! Tu avistamiento ya está visible en el caso.',
+      });
       cargarReportes();
     } catch (err) {
       setMensajeEstado({ tipo: 'error', texto: 'Algo falló al enviar el reporte. Intenta de nuevo.' });
@@ -117,21 +125,28 @@ export default function Reportes({ animalId, animalNombre }) {
   return (
     <div className="bloque-reportes">
       <p className="detalle-etiqueta" style={{ marginTop: 0 }}>
-        Avistamientos y actualizaciones {reportes.length > 0 ? `(${reportes.length})` : ''}
+        Avistamientos {reportes.length > 0 ? `(${reportes.length})` : ''}
       </p>
 
       {cargando && <p className="ayuda-fotos">Cargando...</p>}
 
       {!cargando && reportes.length === 0 && (
-        <p className="ayuda-fotos">Todavía no hay reportes para este caso.</p>
+        <p className="ayuda-fotos">Todavía no hay avistamientos reportados para este caso.</p>
       )}
 
       <ul className="lista-reportes">
         {reportes.map((r) => (
           <li key={r.id} className={`reporte ${r.tipo}`}>
             <div className="reporte-cabecera">
-              <span>{r.tipo === 'encontrado' ? '✅ Reporte de encontrado' : '👀 Avistamiento'}</span>
-              <span>{new Date(r.creado_en).toLocaleDateString('es', { day: '2-digit', month: 'short' })}</span>
+              <span>👀 Avistamiento</span>
+              <span>
+                {new Date(r.creado_en).toLocaleString('es', {
+                  day: '2-digit',
+                  month: 'short',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
             </div>
             <p>{r.mensaje}</p>
             {r.evidencia_url && (
@@ -142,7 +157,11 @@ export default function Reportes({ animalId, animalNombre }) {
         ))}
       </ul>
 
-      {!mostrarForm ? (
+      {estadoAnimal === 'en_casa' ? (
+        <p className="ayuda-fotos" style={{ marginTop: 8 }}>
+          🎉 Este caso ya se resolvió, ¡gracias a todos los que ayudaron! Ya no se aceptan más reportes.
+        </p>
+      ) : !mostrarForm ? (
         <button type="button" className="boton-poster" onClick={() => setMostrarForm(true)}>
           Reportar avistamiento / actualización
         </button>

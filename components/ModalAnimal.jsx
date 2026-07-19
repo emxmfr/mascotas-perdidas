@@ -24,7 +24,7 @@ export default function ModalAnimal({ animal, onClose }) {
         </span>
 
         {animal.foto_url ? (
-          <img className="foto-modal" src={animal.foto_url} alt={animal.nombre || animal.tipo} />
+          <img className="foto-animal foto-modal" src={animal.foto_url} alt={animal.nombre || animal.tipo} />
         ) : (
           <div className="foto-vacia foto-modal">Sin foto</div>
         )}

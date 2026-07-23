@@ -86,7 +86,6 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
             key={n.id}
             type="button"
             className={`numero-sorteo ${n.estado}`}
-            disabled={n.estado !== 'disponible'}
             onClick={() => setNumeroElegido(n)}
           >
             {String(n.numero).padStart(2, '0')}

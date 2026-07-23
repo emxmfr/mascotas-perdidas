@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { SEXOS, SENAS, RAZAS } from '@/lib/opciones';
 import SelectorColor from '@/components/SelectorColor';
+import RecortarFoto from '@/components/RecortarFoto';
 
 const MAX_FOTOS = 3;
 
@@ -13,6 +14,7 @@ export default function Registrar() {
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState(null);
   const [fotos, setFotos] = useState([]);
+  const [colaRecorte, setColaRecorte] = useState([]);
   const [senasElegidas, setSenasElegidas] = useState([]);
   const [colores, setColores] = useState([]);
   const [colorOtro, setColorOtro] = useState('');
@@ -33,7 +35,17 @@ export default function Registrar() {
 
   function elegirFotos(lista) {
     const archivos = Array.from(lista).slice(0, MAX_FOTOS);
-    setFotos(archivos);
+    setFotos([]);
+    setColaRecorte(archivos);
+  }
+
+  function confirmarRecorte(archivoRecortado) {
+    setFotos((prev) => [...prev, archivoRecortado]);
+    setColaRecorte((prev) => prev.slice(1));
+  }
+
+  function omitirRecorte() {
+    setColaRecorte((prev) => prev.slice(1));
   }
 
   function manejarTelefono(valor) {
@@ -110,7 +122,16 @@ export default function Registrar() {
   }
 
   return (
-    <form className="formulario" onSubmit={manejarEnvio}>
+    <>
+      {colaRecorte.length > 0 && (
+        <RecortarFoto
+          archivo={colaRecorte[0]}
+          onConfirmar={confirmarRecorte}
+          onCancelar={omitirRecorte}
+        />
+      )}
+
+      <form className="formulario" onSubmit={manejarEnvio}>
       <h2 className="nombre-animal" style={{ marginBottom: 18 }}>Registrar un caso</h2>
 
       {mensaje && <div className={`mensaje ${mensaje.tipo}`}>{mensaje.texto}</div>}
@@ -241,5 +262,6 @@ export default function Registrar() {
         {enviando ? 'Registrando...' : 'Registrar caso'}
       </button>
     </form>
+    </>
   );
 }

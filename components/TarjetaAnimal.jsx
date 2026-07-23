@@ -16,7 +16,7 @@ export default function TarjetaAnimal({ animal, onClick }) {
       </span>
 
       {fotos.length > 0 ? (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
           <img className="foto-animal" src={fotos[0]} alt={animal.nombre || animal.tipo} />
           {fotos.length > 1 && <span className="contador-fotos">📷 {fotos.length}</span>}
         </div>

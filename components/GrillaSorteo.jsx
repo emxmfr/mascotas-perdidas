@@ -97,54 +97,72 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
       {numeroElegido && (
         <div className="fondo-modal" onClick={cerrar}>
           <div className="tarjeta-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 380 }}>
-            <button className="cerrar-modal" onClick={cerrar} aria-label="Cerrar">×</button>
+<button className="cerrar-modal" onClick={cerrar} aria-label="Cerrar">×</button>
 
-            {confirmado === null ? (
-              <>
-                <h3 className="nombre-animal" style={{ fontSize: 20 }}>
-                  Apartar el número {String(numeroElegido.numero).padStart(2, '0')}
-                </h3>
-                <p className="ayuda-fotos">
-                  Esto no confirma el pago todavía. Después de apartar, te vamos a pedir que
-                  envíes tu comprobante por WhatsApp para confirmarlo.
-                </p>
-                {error && <div className="mensaje error">{error}</div>}
-                <form onSubmit={reservar}>
-                  <div className="campo">
-                    <label>Tu nombre</label>
-                    <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} />
-                  </div>
-                  <div className="campo">
-                    <label>Tu teléfono o contacto</label>
-                    <input type="text" value={contacto} onChange={(e) => setContacto(e.target.value)} />
-                  </div>
-                  <button className="boton-poster rojo" type="submit" disabled={enviando} style={{ width: '100%' }}>
-                    {enviando ? 'Apartando...' : 'Apartar este número'}
-                  </button>
-                </form>
-              </>
-            ) : (
-              <>
-                <h3 className="nombre-animal" style={{ fontSize: 20 }}>
-                  ¡Número {String(confirmado).padStart(2, '0')} apartado! 🎉
-                </h3>
-                <p className="ayuda-fotos">
-                  Envía tu comprobante de pago por WhatsApp para confirmar tu número.
-                </p>
-                <a
-                  className="boton-poster rojo"
-                  style={{ width: '100%', textAlign: 'center', display: 'block' }}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={enlaceWhatsApp(
-                    sorteo.whatsapp,
-                    `Hola! Aparté el número ${String(confirmado).padStart(2, '0')} del sorteo "${sorteo.titulo}". Mi nombre es ${nombre}. Aquí les envío mi comprobante de pago.`
-                  )}
-                >
-                  📲 Enviar comprobante por WhatsApp
-                </a>
-              </>
-            )}
+{numeroElegido.estado === 'disponible' ? (
+  confirmado === null ? (
+    <>
+      <h3 className="nombre-animal" style={{ fontSize: 20 }}>
+        Apartar el número {String(numeroElegido.numero).padStart(2, '0')}
+      </h3>
+      <p className="ayuda-fotos">
+        Esto no confirma el pago todavía. Después de apartar, te vamos a pedir que
+        envíes tu comprobante por WhatsApp para confirmarlo.
+      </p>
+      {error && <div className="mensaje error">{error}</div>}
+      <form onSubmit={reservar}>
+        <div className="campo">
+          <label>Tu nombre</label>
+          <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+        </div>
+        <div className="campo">
+          <label>Tu teléfono o contacto</label>
+          <input type="text" value={contacto} onChange={(e) => setContacto(e.target.value)} />
+        </div>
+        <button className="boton-poster rojo" type="submit" disabled={enviando} style={{ width: '100%' }}>
+          {enviando ? 'Apartando...' : 'Apartar este número'}
+        </button>
+      </form>
+    </>
+  ) : (
+    <>
+      <h3 className="nombre-animal" style={{ fontSize: 20 }}>
+        Número {String(confirmado).padStart(2, '0')} apartado
+      </h3>
+      <p className="ayuda-fotos">
+        Envía tu comprobante de pago por WhatsApp para confirmar tu número.
+      </p>
+      <a
+        className="boton-poster rojo"
+        style={{ width: '100%', textAlign: 'center', display: 'block' }}
+        target="_blank"
+        rel="noopener noreferrer"
+        href={enlaceWhatsApp(
+          sorteo.whatsapp,
+          `Hola! Aparté el número ${String(confirmado).padStart(2, '0')} del sorteo "${sorteo.titulo}". Mi nombre es ${nombre}. Aquí les envío mi comprobante de pago.`
+        )}
+      >
+        Enviar comprobante por WhatsApp
+      </a>
+    </>
+  )
+) : (
+  <>
+    <h3 className="nombre-animal" style={{ fontSize: 20, marginBottom: '15px' }}>
+      Número {String(numeroElegido.numero).padStart(2, '0')}
+    </h3>
+    <div className="detalle-lista">
+      <div className="detalle-fila">
+        <dt>Estado</dt>
+        <dd style={{ textTransform: 'capitalize' }}>{numeroElegido.estado}</dd>
+      </div>
+      <div className="detalle-fila">
+        <dt>Participante</dt>
+        <dd>{numeroElegido.nombre_comprador || 'Sin registrar'}</dd>
+      </div>
+    </div>
+  </>
+)}
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { buscarColor, etiquetaEstado } from '@/lib/opciones';
 import MuestraColor from './MuestraColor';
 import Reportes from './Reportes';
+import { enlaceWhatsApp } from '@/lib/ubicacion';
 
 export default function ModalAnimal({ animal, onClose }) {
   const [indiceFoto, setIndiceFoto] = useState(0);
@@ -135,6 +136,19 @@ export default function ModalAnimal({ animal, onClose }) {
         {!animal.telefono && !animal.contacto_otro && animal.contacto && (
           <p className="detalle-contacto">{animal.contacto}</p>
         )}
+
+        <a
+          className="boton-poster rojo"
+          style={{ marginTop: 12, width: '100%', textAlign: 'center' }}
+          target="_blank"
+          rel="noopener noreferrer"
+          href={enlaceWhatsApp(
+            '',
+            `🐾 ${etiquetaEstado(animal.estado)}: ${animal.nombre || animal.tipo}, en la zona ${animal.zona}. Míralo aquí: ${typeof window !== 'undefined' ? window.location.origin : ''}/?caso=${animal.id}`
+          )}
+        >
+          📲 Compartir este caso por WhatsApp
+        </a>
 
         <div className="bloque-estado">
           <Reportes animalId={animal.id} animalNombre={animal.nombre || animal.tipo} estadoAnimal={animal.estado} />

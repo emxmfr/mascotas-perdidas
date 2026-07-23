@@ -1,4 +1,5 @@
 import './globals.css';
+import 'leaflet/dist/leaflet.css';
 
 export const metadata = {
   title: 'Mascotas Perdidas',
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
           <nav className="nav-poster">
             <a className="boton-poster" href="/">Ver casos</a>
             <a className="boton-poster rojo" href="/registrar">Registrar animal</a>
+            <a className="boton-poster" href="/sorteos">Sorteos</a>
             <a className="boton-poster" href="/quienes-somos">Quiénes somos</a>
           </nav>
         </header>

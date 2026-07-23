@@ -4,24 +4,33 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function Estadisticas() {
-  const [total, setTotal] = useState(null);
+  const [enCasa, setEnCasa] = useState(null);
+  const [reportes, setReportes] = useState(null);
 
   useEffect(() => {
     async function cargar() {
-      const { count } = await supabase
-        .from('animales')
-        .select('*', { count: 'exact', head: true })
-        .eq('estado', 'en_casa');
-      setTotal(count ?? 0);
+      const [{ count: countEnCasa }, { count: countReportes }] = await Promise.all([
+        supabase.from('animales').select('*', { count: 'exact', head: true }).eq('estado', 'en_casa'),
+        supabase.from('avistamientos').select('*', { count: 'exact', head: true }),
+      ]);
+      setEnCasa(countEnCasa ?? 0);
+      setReportes(countReportes ?? 0);
     }
     cargar();
   }, []);
 
-  if (total === null || total === 0) return null;
+  if (enCasa === null || reportes === null) return null;
+  if (enCasa === 0 && reportes === 0) return null;
 
   return (
     <div className="banner-estadistica">
-      🐾 <strong>{total}</strong> mascota{total !== 1 ? 's han' : ' ha'} regresado a casa gracias a esta comunidad
+      {enCasa > 0 && (
+        <span>🐾 <strong>{enCasa}</strong> mascota{enCasa !== 1 ? 's han' : ' ha'} regresado a casa</span>
+      )}
+      {enCasa > 0 && reportes > 0 && <span> · </span>}
+      {reportes > 0 && (
+        <span>📣 <strong>{reportes}</strong> reporte{reportes !== 1 ? 's' : ''} de la comunidad</span>
+      )}
     </div>
   );
 }

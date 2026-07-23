@@ -1,7 +1,7 @@
 import { buscarColor, etiquetaEstado } from '@/lib/opciones';
 import MuestraColor from './MuestraColor';
 
-export default function TarjetaAnimal({ animal, onClick }) {
+export default function TarjetaAnimal({ animal, onClick, distanciaKm }) {
   const fecha = animal.creado_en
     ? new Date(animal.creado_en).toLocaleDateString('es', { day: '2-digit', month: 'short' })
     : '';
@@ -35,6 +35,7 @@ export default function TarjetaAnimal({ animal, onClick }) {
         {animal.sexo ? ` · ${animal.sexo}` : ''}
         <br />
         Zona: {animal.zona}
+        {typeof distanciaKm === 'number' ? ` · ${distanciaKm.toFixed(1)} km de ti` : ''}
         {animal.descripcion ? <><br />{animal.descripcion}</> : null}
       </p>
 

@@ -688,3 +688,145 @@ a {
 @media (max-width: 480px) {
   .grupo-casillas { grid-template-columns: 1fr; }
 }
+
+.barra-vista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.cambio-vista {
+  display: flex;
+  gap: 6px;
+  background: var(--paper);
+  border: 1px solid var(--paper-shadow);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.boton-vista {
+  border: none;
+  background: transparent;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.boton-vista.activo {
+  background: var(--acento);
+  color: #fff;
+}
+
+.cerca-activo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cerca-activo select {
+  padding: 9px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--paper-shadow);
+  font-size: 13px;
+}
+
+.mapa-contenedor {
+  height: 480px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--paper-shadow);
+  box-shadow: 0 8px 20px rgba(19,42,19,0.1);
+}
+
+.sorteo-tarjeta {
+  background: var(--paper);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 26px;
+  box-shadow: 0 8px 20px rgba(19,42,19,0.08);
+}
+
+.sorteo-texto {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 6px 0;
+}
+
+.sorteo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--cork-dark);
+  font-weight: 700;
+  margin: 10px 0 16px;
+}
+
+.leyenda-sorteo {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.punto-leyenda {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.punto-leyenda.disponible { background: #fff; border: 1px solid var(--paper-shadow); }
+.punto-leyenda.reservado { background: var(--tape); }
+.punto-leyenda.pagado { background: var(--acento); }
+
+.grilla-numeros {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+
+.numero-sorteo {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 1px solid var(--paper-shadow);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.numero-sorteo:hover:not(:disabled) {
+  border-color: var(--acento);
+}
+
+.numero-sorteo.reservado {
+  background: var(--tape);
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.numero-sorteo.pagado {
+  background: var(--acento);
+  color: #fff;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .grilla-numeros {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}

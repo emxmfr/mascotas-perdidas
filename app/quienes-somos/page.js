@@ -26,6 +26,18 @@ export default function QuienesSomos() {
         <li>Sé paciente y amable: detrás de cada caso hay una familia preocupada</li>
       </ul>
 
+      <p className="detalle-etiqueta" style={{ marginTop: 20 }}>¿Cómo puedes ayudarnos?</p>
+      <p style={{ fontSize: 14.5, lineHeight: 1.7, color: 'var(--ink-soft)' }}>
+        Somos parte de <strong>Huellitas Maleñas</strong>, un albergue de animales en Mala.
+        De vez en cuando organizamos <strong>sorteos</strong> para recaudar fondos y seguir
+        rescatando y cuidando animales — puedes participar y ver los sorteos activos en la
+        sección <a href="/sorteos" style={{ color: 'var(--acento)', fontWeight: 700 }}>Sorteos</a>.
+      </p>
+      <p style={{ fontSize: 14.5, lineHeight: 1.7, color: 'var(--ink-soft)' }}>
+        También ayudas muchísimo compartiendo los casos del tablón, reportando avistamientos,
+        y difundiendo la página entre tus vecinos.
+      </p>
+
       <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 24 }}>
         ¿Tienes dudas, sugerencias o encontraste un error en el sitio? Escríbenos.
       </p>

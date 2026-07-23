@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { SEXOS, SENAS, RAZAS } from '@/lib/opciones';
 import SelectorColor from '@/components/SelectorColor';
 import RecortarFoto from '@/components/RecortarFoto';
+import { obtenerUbicacion } from '@/lib/ubicacion';
 
 const MAX_FOTOS = 3;
 
@@ -19,6 +20,20 @@ export default function Registrar() {
   const [colores, setColores] = useState([]);
   const [colorOtro, setColorOtro] = useState('');
   const [telefono, setTelefono] = useState('');
+  const [ubicacion, setUbicacion] = useState(null);
+  const [buscandoUbicacion, setBuscandoUbicacion] = useState(false);
+
+  async function usarMiUbicacion() {
+    setBuscandoUbicacion(true);
+    try {
+      const coords = await obtenerUbicacion();
+      setUbicacion(coords);
+    } catch {
+      setMensaje({ tipo: 'error', texto: 'No pudimos obtener tu ubicación. Revisa los permisos del navegador.' });
+    } finally {
+      setBuscandoUbicacion(false);
+    }
+  }
   const [contactoOtro, setContactoOtro] = useState('');
 
   function alternarSena(sena) {
@@ -88,6 +103,8 @@ export default function Registrar() {
       telefono: telefono || null,
       contacto_otro: contactoOtro.trim() || null,
       contacto: telefono || contactoOtro.trim(),
+      latitud: ubicacion?.lat ?? null,
+      longitud: ubicacion?.lng ?? null,
       senas: senasElegidas,
     };
 
@@ -199,6 +216,15 @@ export default function Registrar() {
         <div className="campo">
           <label>Zona / barrio donde se vio</label>
           <input name="zona" type="text" required placeholder="Ej. Miraflores" />
+          <button
+            type="button"
+            className="boton-poster"
+            onClick={usarMiUbicacion}
+            disabled={buscandoUbicacion}
+            style={{ marginTop: 6, fontSize: 12.5, padding: '7px 14px' }}
+          >
+            {buscandoUbicacion ? 'Buscando...' : ubicacion ? '📍 Ubicación guardada' : '📍 Usar mi ubicación actual'}
+          </button>
         </div>
       </div>
 

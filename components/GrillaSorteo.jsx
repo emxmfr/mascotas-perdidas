@@ -122,10 +122,11 @@ return (
           ))}
         </div>
 
-        {numeroElegido && (
+{numeroElegido && (
           <div className="fondo-modal" onClick={cerrar}>
             <div className="tarjeta-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 380 }}>
               <button className="cerrar-modal" onClick={cerrar} aria-label="Cerrar">x</button>
+              
               {numeroElegido.estado === 'disponible' ? (
                 confirmado === null ? (
                   <>
@@ -134,7 +135,7 @@ return (
                     </h3>
                     <p className="ayuda-fotos">
                       Esto no confirma el pago todavía. Después de apartar, te vamos a pedir que
-                      envíes tu comprobante por WhatsApp para confirmarlo.
+                      envíes tu comprobante por WhatsApp. <strong>Tienes un plazo máximo de 12 horas para hacerlo</strong>, o el número volverá a estar disponible.
                     </p>
                     {error && <div className="mensaje error">{error}</div>}
                     <form onSubmit={reservar}>
@@ -157,7 +158,7 @@ return (
                       Número {String(confirmado).padStart(2, '0')} apartado
                     </h3>
                     <p className="ayuda-fotos">
-                      Envía tu comprobante de pago por WhatsApp para confirmar tu número.
+                      Envía tu comprobante de pago por WhatsApp para confirmar tu número antes de que pasen 12 horas.
                     </p>
                     <a
                       className="boton-poster rojo"
@@ -187,6 +188,20 @@ return (
                       <dt>Participante</dt>
                       <dd>{numeroElegido.nombre_comprador || 'Sin registrar'}</dd>
                     </div>
+                    {numeroElegido.estado === 'reservado' && numeroElegido.actualizado_en && (
+                      <>
+                        <div className="detalle-fila">
+                          <dt>Hora de reserva</dt>
+                          <dd>{new Date(numeroElegido.actualizado_en).toLocaleString('es-PE', { hour: '2-digit', minute:'2-digit', day: '2-digit', month: 'short' })}</dd>
+                        </div>
+                        <div className="detalle-fila">
+                          <dt>Tiempo para pagar</dt>
+                          <dd style={{ color: tiempoRestante === 'Expirado' ? '#d6483f' : 'inherit', fontWeight: 'bold' }}>
+                            {tiempoRestante}
+                          </dd>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </>
               )}

@@ -42,9 +42,10 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
 
   async function reservar(e) {
     e.preventDefault();
-    if (!nombre.trim() || !contacto.trim()) {
-      setError('Completa tu nombre y contacto.');
+    if (!nombre.trim() || contacto.length !== 9) {
+      setError('Ingresa tu nombre y un número de celular válido de 9 dígitos.');
       return;
+    }
     }
 
     setEnviando(true);
@@ -143,9 +144,14 @@ return (
                         <label>Tu nombre</label>
                         <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} />
                       </div>
-                      <div className="campo">
-                        <label>Tu teléfono o contacto</label>
-                        <input type="text" value={contacto} onChange={(e) => setContacto(e.target.value)} />
+                     <div className="campo">
+                        <label>Número de celular</label>
+                        <input 
+                          type="tel" 
+                          value={contacto} 
+                          onChange={(e) => setContacto(e.target.value.replace(/\D/g, '').slice(0, 9))} 
+                          placeholder="Ej: 987654321"
+                        />
                       </div>
                       <button className="boton-poster rojo" type="submit" disabled={enviando} style={{ width: '100%' }}>
                         {enviando ? 'Apartando...' : 'Apartar este número'}

@@ -46,7 +46,6 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
       setError('Ingresa tu nombre y un número de celular válido de 9 dígitos.');
       return;
     }
-    }
 
     setEnviando(true);
     setError('');

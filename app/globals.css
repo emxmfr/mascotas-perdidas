@@ -830,3 +830,56 @@ a {
     grid-template-columns: repeat(6, 1fr);
   }
 }
+/* Contenedor principal para dividir la pantalla en dos columnas */
+.layout-sorteo-doble {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-bottom: 26px;
+}
+
+/* Tarjeta para los premios */
+.tarjeta-premios {
+  background: var(--paper);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: 0 8px 20px rgba(19,42,19,0.08);
+}
+
+.tarjeta-premios h3 {
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0 0 16px 0;
+  color: var(--cork-dark);
+}
+
+/* Grilla adaptable para las fotos (varía según la cantidad) */
+.grilla-fotos-premios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+}
+
+.foto-premio {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--paper-shadow);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.foto-premio:hover {
+  transform: scale(1.05);
+}
+
+/* En pantallas pequeñas, apilar una debajo de otra */
+@media (max-width: 900px) {
+  .layout-sorteo-doble {
+    grid-template-columns: 1fr;
+  }
+}

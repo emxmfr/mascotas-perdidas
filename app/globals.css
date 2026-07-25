@@ -883,3 +883,9 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+.mapa-selector {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--paper-shadow);
+}

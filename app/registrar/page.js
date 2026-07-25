@@ -2,11 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { supabase } from '@/lib/supabaseClient';
 import { SEXOS, SENAS, RAZAS } from '@/lib/opciones';
 import SelectorColor from '@/components/SelectorColor';
 import RecortarFoto from '@/components/RecortarFoto';
 import { obtenerUbicacion } from '@/lib/ubicacion';
+
+const SeleccionarUbicacion = dynamic(() => import('@/components/SeleccionarUbicacion'), { ssr: false });
 
 const MAX_FOTOS = 3;
 
@@ -22,6 +25,7 @@ export default function Registrar() {
   const [telefono, setTelefono] = useState('');
   const [ubicacion, setUbicacion] = useState(null);
   const [buscandoUbicacion, setBuscandoUbicacion] = useState(false);
+  const [mostrarMapa, setMostrarMapa] = useState(false);
 
   async function usarMiUbicacion() {
     setBuscandoUbicacion(true);
@@ -231,6 +235,40 @@ export default function Registrar() {
             <option value="Otro distrito">Otro distrito</option>
           </select>
         </div>
+      </div>
+
+      <div className="campo">
+        <label>Ubicación en el mapa (opcional, ayuda a que aparezca en "cerca de mí")</label>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className="boton-poster"
+            onClick={usarMiUbicacion}
+            disabled={buscandoUbicacion}
+            style={{ fontSize: 12.5, padding: '7px 14px' }}
+          >
+            {buscandoUbicacion ? 'Buscando...' : '📍 Usar mi ubicación actual'}
+          </button>
+          <button
+            type="button"
+            className="boton-poster"
+            onClick={() => setMostrarMapa((v) => !v)}
+            style={{ fontSize: 12.5, padding: '7px 14px' }}
+          >
+            🗺️ {mostrarMapa ? 'Ocultar mapa' : 'Marcar el punto en el mapa'}
+          </button>
+        </div>
+
+        {ubicacion && (
+          <p className="ayuda-fotos">📍 Ubicación guardada ({ubicacion.lat.toFixed(4)}, {ubicacion.lng.toFixed(4)})</p>
+        )}
+
+        {mostrarMapa && (
+          <div style={{ marginTop: 8 }}>
+            <p className="ayuda-fotos">Haz clic en el mapa donde viste al animal (puedes arrastrar el pin para ajustar).</p>
+            <SeleccionarUbicacion posicion={ubicacion} onCambio={setUbicacion} />
+          </div>
+        )}
       </div>
 
       <div className="campo">

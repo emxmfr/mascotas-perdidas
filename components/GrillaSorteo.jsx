@@ -11,6 +11,34 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState('');
   const [confirmado, setConfirmado] = useState(null);
+  const [tiempoRestante, setTiempoRestante] = useState('');
+  useEffect(() => {
+    let intervalo;
+    
+    if (numeroElegido && numeroElegido.estado === 'reservado' && numeroElegido.actualizado_en) {
+      const calcularTiempo = () => {
+        const fechaReserva = new Date(numeroElegido.actualizado_en).getTime();
+        const limite = fechaReserva + (12 * 60 * 60 * 1000); // 12 horas
+        const ahora = new Date().getTime();
+        const diferencia = limite - ahora;
+
+        if (diferencia <= 0) {
+          setTiempoRestante('Expirado');
+          clearInterval(intervalo);
+        } else {
+          const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+          const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+          setTiempoRestante(`${horas}h ${minutos}m ${segundos}s`);
+        }
+      };
+
+      calcularTiempo();
+      intervalo = setInterval(calcularTiempo, 1000);
+    }
+
+    return () => clearInterval(intervalo);
+  }, [numeroElegido]);
 
   async function reservar(e) {
     e.preventDefault();

@@ -215,16 +215,21 @@ export default function Registrar() {
         </div>
         <div className="campo">
           <label>Zona / barrio donde se vio</label>
-          <input name="zona" type="text" required placeholder="Ej. Miraflores" />
-          <button
-            type="button"
-            className="boton-poster"
-            onClick={usarMiUbicacion}
-            disabled={buscandoUbicacion}
-            style={{ marginTop: 6, fontSize: 12.5, padding: '7px 14px' }}
-          >
-            {buscandoUbicacion ? 'Buscando...' : ubicacion ? '📍 Ubicación guardada' : '📍 Usar mi ubicación actual'}
-          </button>
+          <select name="zona" required defaultValue="">
+            <option value="" disabled>Selecciona una zona...</option>
+            <option value="Mala - Centro">Mala - Centro</option>
+            <option value="Mala - San Juan (I, II, III Etapa)">Mala - San Juan (I, II, III Etapa)</option>
+            <option value="Mala - Dignidad Nacional">Mala - Dignidad Nacional</option>
+            <option value="Mala - La Huaca">Mala - La Huaca</option>
+            <option value="Mala - Bujama">Mala - Bujama</option>
+            <option value="Mala - San Marcos / El Salitre">Mala - San Marcos / El Salitre</option>
+            <option value="Mala - Otros sectores">Mala - Otros sectores</option>
+            <option value="San Antonio">San Antonio</option>
+            <option value="Santa Cruz de Flores">Santa Cruz de Flores</option>
+            <option value="Asia">Asia</option>
+            <option value="Calango">Calango</option>
+            <option value="Otro distrito">Otro distrito</option>
+          </select>
         </div>
       </div>
 

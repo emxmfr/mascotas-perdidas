@@ -25,8 +25,6 @@ function ContenidoHome() {
   const [filtroZona, setFiltroZona] = useState('');
   const [filtroColor, setFiltroColor] = useState('todos');
   const [filtroSexo, setFiltroSexo] = useState('todos');
-const [filtroColor, setFiltroColor] = useState('todos');
-  const [filtroSexo, setFiltroSexo] = useState('todos');
 
   function limpiarFiltros() {
     setFiltroTipo('todos');
@@ -36,7 +34,6 @@ const [filtroColor, setFiltroColor] = useState('todos');
     setFiltroSexo('todos');
   }
 
-  const [miUbicacion, setMiUbicacion] = useState(null);
   const [miUbicacion, setMiUbicacion] = useState(null);
   const [radioKm, setRadioKm] = useState(10);
   const [buscandoCerca, setBuscandoCerca] = useState(false);
@@ -108,7 +105,6 @@ const [filtroColor, setFiltroColor] = useState('todos');
       <Estadisticas />
 
       <div className="panel-filtros">
-<div className="panel-filtros">
         <div className="campo-filtro">
           <label>Tipo de animal</label>
           <select value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)}>
@@ -177,7 +173,6 @@ const [filtroColor, setFiltroColor] = useState('todos');
         >
           Borrar filtros
         </button>
-      </div>
       </div>
 
       <div className="barra-vista">

@@ -25,7 +25,18 @@ function ContenidoHome() {
   const [filtroZona, setFiltroZona] = useState('');
   const [filtroColor, setFiltroColor] = useState('todos');
   const [filtroSexo, setFiltroSexo] = useState('todos');
+const [filtroColor, setFiltroColor] = useState('todos');
+  const [filtroSexo, setFiltroSexo] = useState('todos');
 
+  function limpiarFiltros() {
+    setFiltroTipo('todos');
+    setFiltroEstado('todos');
+    setFiltroZona('');
+    setFiltroColor('todos');
+    setFiltroSexo('todos');
+  }
+
+  const [miUbicacion, setMiUbicacion] = useState(null);
   const [miUbicacion, setMiUbicacion] = useState(null);
   const [radioKm, setRadioKm] = useState(10);
   const [buscandoCerca, setBuscandoCerca] = useState(false);
@@ -97,6 +108,7 @@ function ContenidoHome() {
       <Estadisticas />
 
       <div className="panel-filtros">
+<div className="panel-filtros">
         <div className="campo-filtro">
           <label>Tipo de animal</label>
           <select value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)}>
@@ -118,7 +130,7 @@ function ContenidoHome() {
         </div>
 
         <div className="campo-filtro">
-          <label>Zona</label>
+          <label>Ubicación</label>
           <select value={filtroZona} onChange={(e) => setFiltroZona(e.target.value)}>
             <option value="">Todas</option>
             {zonas.map((z) => (
@@ -146,6 +158,26 @@ function ContenidoHome() {
             ))}
           </select>
         </div>
+
+        <button
+          onClick={limpiarFiltros}
+          type="button"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#4f772d',
+            textDecoration: 'underline',
+            cursor: 'pointer',
+            fontWeight: '600',
+            fontSize: '14px',
+            alignSelf: 'center',
+            marginTop: '15px',
+            padding: '0 10px'
+          }}
+        >
+          Borrar filtros
+        </button>
+      </div>
       </div>
 
       <div className="barra-vista">

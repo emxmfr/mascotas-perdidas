@@ -35,7 +35,7 @@ export default function QuienesSomos() {
       <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 24 }}>
         ¿Tienes dudas, sugerencias o encontraste un error en el sitio?{' '}
         <a
-          href="https://wa.me/51999999999"
+          href="https://wa.me/51982122832"
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: 'var(--acento)', fontWeight: 700 }}

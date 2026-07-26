@@ -788,9 +788,9 @@ a {
   vertical-align: middle;
 }
 
-.punto-leyenda.disponible { background: #fff; border: 1px solid var(--paper-shadow); }
-.punto-leyenda.reservado { background: var(--tape); }
-.punto-leyenda.pagado { background: var(--acento); }
+.punto-leyenda.disponible { background: #fff; border: 1px solid var(--acento); }
+.punto-leyenda.reservado { background: #e8a63c; }
+.punto-leyenda.pagado { background: var(--pin-red); }
 
 .grilla-numeros {
   display: grid;
@@ -801,26 +801,29 @@ a {
 .numero-sorteo {
   aspect-ratio: 1;
   border-radius: 8px;
-  border: 1px solid var(--paper-shadow);
+  border: 1px solid var(--acento);
   background: #fff;
+  color: var(--acento);
   font-size: 12px;
   font-weight: 700;
-  color: var(--ink);
   cursor: pointer;
 }
 
 .numero-sorteo:hover:not(:disabled) {
-  border-color: var(--acento);
+  background: var(--acento);
+  color: #fff;
 }
 
 .numero-sorteo.reservado {
-  background: var(--tape);
+  background: #e8a63c;
+  border-color: #e8a63c;
   color: #fff;
   cursor: not-allowed;
 }
 
 .numero-sorteo.pagado {
-  background: var(--acento);
+  background: var(--pin-red);
+  border-color: var(--pin-red);
   color: #fff;
   cursor: not-allowed;
 }

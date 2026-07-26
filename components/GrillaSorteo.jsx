@@ -117,7 +117,7 @@ return (
               className={`numero-sorteo ${n.estado}`}
               onClick={() => setNumeroElegido(n)}
             >
-              {String(n.numero).padStart(2, '0')}
+              {String(n.numero).padStart(3, '0')}
             </button>
           ))}
         </div>
@@ -131,7 +131,7 @@ return (
                 confirmado === null ? (
                   <>
                     <h3 className="nombre-animal" style={{ fontSize: 20 }}>
-                      Apartar el número {String(numeroElegido.numero).padStart(2, '0')}
+                      Apartar el número {String(numeroElegido.numero).padStart(3, '0')}
                     </h3>
                     <p className="ayuda-fotos">
                       Esto no confirma el pago todavía. Después de apartar, te vamos a pedir que
@@ -160,7 +160,7 @@ return (
                 ) : (
                   <>
                     <h3 className="nombre-animal" style={{ fontSize: 20 }}>
-                      Número {String(confirmado).padStart(2, '0')} apartado
+                      Número {String(confirmado).padStart(3, '0')} apartado
                     </h3>
                     <p className="ayuda-fotos">
                       Envía tu comprobante de pago por WhatsApp para confirmar tu número antes de que pasen 12 horas.
@@ -172,7 +172,7 @@ return (
                       rel="noopener noreferrer"
                       href={enlaceWhatsApp(
                         sorteo.whatsapp,
-                        `Hola! Aparté el número ${String(confirmado).padStart(2, '0')} del sorteo "${sorteo.titulo}". Mi nombre es ${nombre}. Aquí les envío mi comprobante de pago.`
+                        `Hola! Aparté el número ${String(confirmado).padStart(3, '0')} del sorteo "${sorteo.titulo}". Mi nombre es ${nombre}. Aquí les envío mi comprobante de pago.`
                       )}
                     >
                       Enviar comprobante por WhatsApp
@@ -182,7 +182,7 @@ return (
               ) : (
                 <>
                   <h3 className="nombre-animal" style={{ fontSize: 20, marginBottom: '15px' }}>
-                    Número {String(numeroElegido.numero).padStart(2, '0')}
+                    Número {String(numeroElegido.numero).padStart(3, '0')}
                   </h3>
                   <div className="detalle-lista">
                     <div className="detalle-fila">

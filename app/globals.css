@@ -892,3 +892,10 @@ a {
   overflow: hidden;
   border: 1px solid var(--paper-shadow);
 }
+.fondo-modal {
+  z-index: 9999 !important;
+}
+
+.leaflet-container {
+  z-index: 1 !important;
+}

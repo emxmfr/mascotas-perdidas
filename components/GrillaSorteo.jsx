@@ -132,7 +132,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
               className={`numero-sorteo ${n.estado}`}
               onClick={() => setNumeroElegido(n)}
               // --- BOTÓN BLOQUEADO AQUÍ ---
-              disabled={reservasCerradas || n.estado !== 'disponible'}
+              disabled={reservasCerradas && n.estado === 'disponible'}
             >
               {String(n.numero).padStart(3, '0')}
             </button>

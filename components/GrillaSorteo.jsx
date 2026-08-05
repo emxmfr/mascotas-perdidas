@@ -12,6 +12,13 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
   const [error, setError] = useState('');
   const [confirmado, setConfirmado] = useState(null);
   const [tiempoRestante, setTiempoRestante] = useState('');
+
+  // --- LÓGICA DE CIERRE AÑADIDA AQUÍ ---
+  const fechaLimite = new Date(sorteo.fecha_cierre);
+  const hoy = new Date();
+  const reservasCerradas = hoy > fechaLimite;
+  // ------------------------------------
+
   useEffect(() => {
     let intervalo;
     
@@ -88,7 +95,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
     setConfirmado(null);
   }
 
-return (
+  return (
     <div className="layout-sorteo-doble">
       <div className="sorteo-tarjeta" style={{ marginBottom: 0 }}>
         <h2 className="nombre-animal" style={{ fontSize: 22 }}>{sorteo.titulo}</h2>
@@ -109,6 +116,14 @@ return (
           <span><i className="punto-leyenda pagado" /> Vendido</span>
         </div>
 
+        {/* --- MENSAJE DE CIERRE AÑADIDO AQUÍ --- */}
+        {reservasCerradas && (
+          <div className="mensaje error" style={{ marginBottom: '15px' }}>
+            Las reservas en línea han cerrado. Estamos preparando el sorteo.
+          </div>
+        )}
+        {/* ---------------------------------------- */}
+
         <div className="grilla-numeros">
           {numeros.map((n) => (
             <button
@@ -116,13 +131,15 @@ return (
               type="button"
               className={`numero-sorteo ${n.estado}`}
               onClick={() => setNumeroElegido(n)}
+              // --- BOTÓN BLOQUEADO AQUÍ ---
+              disabled={reservasCerradas || n.estado !== 'disponible'}
             >
               {String(n.numero).padStart(3, '0')}
             </button>
           ))}
         </div>
 
-{numeroElegido && (
+        {numeroElegido && (
           <div className="fondo-modal" onClick={cerrar}>
             <div className="tarjeta-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 380 }}>
               <button className="cerrar-modal" onClick={cerrar} aria-label="Cerrar">x</button>

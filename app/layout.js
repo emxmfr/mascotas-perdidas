@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <body>
         <header className="franja">
-          <h1 className="titulo-poster">Mascotas Perdidas</h1>
+          <h1 className="titulo-poster">Huellitas Maleñas</h1>
           <p className="subtitulo-poster">Tablón comunitario · reporta y busca en tu zona</p>
           <nav className="nav-poster">
             <a className="boton-poster" href="/">Ver casos</a>

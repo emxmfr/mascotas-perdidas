@@ -2,7 +2,7 @@ import './globals.css';
 import 'leaflet/dist/leaflet.css';
 
 export const metadata = {
-  title: 'Mascotas Perdidas',
+  title: 'Huellitas Maleñas',
   description: 'Tablón comunitario para registrar y buscar mascotas perdidas',
 };
 

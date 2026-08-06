@@ -321,9 +321,6 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
   if (reservasCerradas) {
     return (
       <div style={{ marginTop: '20px', width: '100%' }}>
-        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#ffffff', color: '#1f2937', borderRadius: '8px', border: '1px solid #d1d5db', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-          Todavía no hay ningún sorteo disponible. Mantente atento a la página de Facebook de Huellitas Maleñas para próximas novedades.
-        </div>
         <details style={{ background: '#ffffff', padding: '20px', borderRadius: '12px', border: '1px solid #d1d5db', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
           <summary style={{ cursor: 'pointer', fontWeight: 'bold', fontSize: '1.2rem', outline: 'none', color: '#1f2937' }}>
             Ver sorteo pasado: {sorteo.titulo} (Desplegar)

@@ -100,9 +100,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
       <div className="sorteo-tarjeta" style={{ marginBottom: 0 }}>
         <h2 className="nombre-animal" style={{ fontSize: 22 }}>{sorteo.titulo}</h2>
         {sorteo.descripcion && <p className="sorteo-texto">{sorteo.descripcion}</p>}
-        {sorteo.premios && (
-          <p className="sorteo-texto"><strong>Premios:</strong> {sorteo.premios}</p>
-        )}
+        
         <div className="sorteo-meta">
           {sorteo.fecha_sorteo && (
             <span>Sorteo: {new Date(sorteo.fecha_sorteo + 'T12:00:00').toLocaleDateString('es', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
@@ -113,7 +111,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
         <div className="leyenda-sorteo">
           <span><i className="punto-leyenda disponible" /> Disponible</span>
           <span><i className="punto-leyenda reservado" /> Reservado</span>
-          <span><i className="punto-leyenda pagado" /> Vendido</span>
+          <span><i className="punto-leyenda vendido" /> Vendido</span>
         </div>
 
         {/* --- MENSAJE DE CIERRE AÑADIDO AQUÍ --- */}
@@ -232,24 +230,50 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
         )}
       </div>
 
-      <div className="tarjeta-premios">
-        <h3>Premios a sortear</h3>
-        {sorteo.fotos_premios && sorteo.fotos_premios.length > 0 ? (
-          <div className="grilla-fotos-premios">
-            {sorteo.fotos_premios.map((url, index) => (
-              <img 
-                key={index} 
-                src={url} 
-                alt={`Premio ${index + 1}`} 
-                className="foto-premio" 
-                onClick={() => window.open(url, '_blank')}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="sorteo-texto">Las fotos de los premios se publicarán pronto.</p>
-        )}
-      </div>
+      <details className="tarjeta-premios" style={{ background: '#ffffff', padding: '20px', borderRadius: '12px', border: '1px solid #e5e7eb', marginTop: '20px' }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem', outline: 'none' }}>
+          <h3 style={{ display: 'inline', marginLeft: '5px' }}>Premios a sortear (Desplegar)</h3>
+        </summary>
+        <div style={{ marginTop: '15px' }}>
+          
+          {sorteo.detalle_premios && sorteo.detalle_premios.length > 0 ? (
+            <div style={{ marginBottom: '20px' }}>
+              {sorteo.detalle_premios.map((item, index) => (
+                <div key={index} style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '8px', marginBottom: '10px', backgroundColor: '#f9fafb' }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{item.premio}</div>
+                  {(item.numero_ganador || item.nombre_ganador) ? (
+                    <div style={{ color: '#16a34a', marginTop: '5px', fontWeight: '600' }}>
+                      Ganador: N° {item.numero_ganador} - {item.nombre_ganador}
+                    </div>
+                  ) : (
+                    <div style={{ color: '#6b7280', marginTop: '5px' }}>Sorteo pendiente</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            sorteo.premios && (
+              <p className="sorteo-texto" style={{ marginBottom: '15px' }}><strong>Lista de Premios:</strong> {sorteo.premios}</p>
+            )
+          )}
+
+          {sorteo.fotos_premios && sorteo.fotos_premios.length > 0 ? (
+            <div className="grilla-fotos-premios">
+              {sorteo.fotos_premios.map((url, index) => (
+                <img 
+                  key={index} 
+                  src={url} 
+                  alt={`Premio ${index + 1}`} 
+                  className="foto-premio" 
+                  onClick={() => window.open(url, '_blank')}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="sorteo-texto">Las fotos de los premios se publicarán pronto.</p>
+          )}
+        </div>
+      </details>
     </div>
   );
 }

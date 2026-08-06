@@ -41,6 +41,12 @@ export default function Sorteos() {
     cargar();
   }, [cargar]);
 
+  // Lógica para determinar si se muestra el mensaje general
+  const hoy = new Date();
+  const todosCerrados = sorteos.length > 0 && sorteos.every((s) => new Date(s.fecha_cierre) < hoy);
+  const noHaySorteos = sorteos.length === 0;
+  const mostrarAvisoGlobal = !cargando && (noHaySorteos || todosCerrados);
+
   return (
     <>
       <h2 className="nombre-animal" style={{ fontSize: 26, marginBottom: 4 }}>Sorteos</h2>
@@ -51,8 +57,10 @@ export default function Sorteos() {
 
       {cargando && <p className="vacio">Cargando sorteos...</p>}
 
-      {!cargando && sorteos.length === 0 && (
-        <p className="vacio">No hay sorteos activos en este momento. ¡Vuelve pronto!</p>
+      {mostrarAvisoGlobal && (
+        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#ffffff', color: '#1f2937', borderRadius: '8px', border: '1px solid #d1d5db', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+          Todavía no hay ningún sorteo disponible. Mantente atento a la página de Facebook de Huellitas Maleñas para próximas novedades.
+        </div>
       )}
 
       {sorteos.map((sorteo) => (

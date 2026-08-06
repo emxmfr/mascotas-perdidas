@@ -6,6 +6,7 @@ import { enlaceWhatsApp } from '@/lib/ubicacion';
 
 export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
   const [numerosElegidos, setNumerosElegidos] = useState([]);
+  const [abrirFormulario, setAbrirFormulario] = useState(false);
   const [numeroDetalle, setNumeroDetalle] = useState(null);
   const [nombre, setNombre] = useState('');
   const [contacto, setContacto] = useState('');
@@ -99,6 +100,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
       setError('Uno o más números seleccionados acaban de ser apartados por otra persona. La lista se actualizará.');
       onActualizar();
       setNumerosElegidos([]);
+      setAbrirFormulario(false);
       return;
     }
 
@@ -108,6 +110,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
 
   function cerrar() {
     setNumerosElegidos([]);
+    setAbrirFormulario(false);
     setNumeroDetalle(null);
     setNombre('');
     setContacto('');
@@ -115,7 +118,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
     setConfirmados([]);
   }
 
-  const mostrarModal = numerosElegidos.length > 0 || numeroDetalle !== null || confirmados.length > 0;
+  const mostrarModal = abrirFormulario || numeroDetalle !== null || confirmados.length > 0;
 
   const contenidoSorteo = (
     <div className="layout-sorteo-doble">
@@ -140,8 +143,8 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
 
         <div className="leyenda-sorteo">
           <span><i className="punto-leyenda disponible" /> Disponible</span>
-          <span><i className="punto-leyenda reservado" /> Reservado</span>
-          <span><i className="punto-leyenda vendido" /> Vendido</span>
+          <span><i className="punto-leyenda reservado" style={{ backgroundColor: '#eab308' }} /> Reservado</span>
+          <span><i className="punto-leyenda vendido" style={{ backgroundColor: '#d6483f' }} /> Vendido</span>
         </div>
 
         {reservasCerradas ? (
@@ -171,6 +174,18 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
           })}
         </div>
 
+        {numerosElegidos.length > 0 && !reservasCerradas && !abrirFormulario && confirmados.length === 0 && (
+          <div style={{ marginTop: '20px' }}>
+            <button
+              type="button"
+              style={{ backgroundColor: '#4f772d', color: 'white', width: '100%', padding: '12px', fontSize: '1.1rem', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+              onClick={() => setAbrirFormulario(true)}
+            >
+              Apartar {numerosElegidos.length} {numerosElegidos.length === 1 ? 'número' : 'números'} por S/ {totalAPagar}
+            </button>
+          </div>
+        )}
+
         {mostrarModal && (
           <div className="fondo-modal" onClick={cerrar}>
             <div className="tarjeta-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 400 }}>
@@ -197,7 +212,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
                     rel="noopener noreferrer"
                     href={enlaceWhatsApp(
                       sorteo.whatsapp,
-                      `Hola! Aparté los números ${confirmados.map(n => String(n).padStart(3, '0')).join(', ')} del sorteo "${sorteo.titulo}". Mi nombre es ${nombre}. El total a pagar es S/ ${totalAPagar}. Aquí envío mi comprobante de pago.`
+                      `Hola. Aparté los números ${confirmados.map(n => String(n).padStart(3, '0')).join(', ')} del sorteo "${sorteo.titulo}". Mi nombre es ${nombre}. El total a pagar es S/ ${totalAPagar}. Aquí envío mi comprobante de pago.`
                     )}
                   >
                     Enviar comprobante por WhatsApp
@@ -265,7 +280,7 @@ export default function GrillaSorteo({ sorteo, numeros, onActualizar }) {
                       />
                     </div>
                     <button className="boton-poster rojo" type="submit" disabled={enviando} style={{ width: '100%' }}>
-                      {enviando ? 'Apartando...' : `Apartar por S/ ${totalAPagar}`}
+                      {enviando ? 'Apartando...' : `Confirmar y apartar por S/ ${totalAPagar}`}
                     </button>
                   </form>
                 </>

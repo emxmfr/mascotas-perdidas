@@ -1,7 +1,7 @@
 import { buscarColor, etiquetaEstado } from '@/lib/opciones';
 import MuestraColor from './MuestraColor';
 
-export default function TarjetaAnimal({ animal, onClick, distanciaKm }) {
+export default function TarjetaAnimal({ animal, onClick, distanciaKm, similitud }) {
   const fecha = animal.creado_en
     ? new Date(animal.creado_en).toLocaleDateString('es', { day: '2-digit', month: 'short' })
     : '';
@@ -19,6 +19,11 @@ export default function TarjetaAnimal({ animal, onClick, distanciaKm }) {
         <div style={{ position: 'relative', zIndex: 1 }}>
           <img className="foto-animal" src={fotos[0]} alt={animal.nombre || animal.tipo} />
           {fotos.length > 1 && <span className="contador-fotos">📷 {fotos.length}</span>}
+          {typeof similitud === 'number' && (
+            <span className="contador-fotos" style={{ left: 10, right: 'auto' }}>
+              🔍 {Math.round(similitud * 100)}% parecido
+            </span>
+          )}
         </div>
       ) : (
         <div className="foto-vacia">Sin foto</div>

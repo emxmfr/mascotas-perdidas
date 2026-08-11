@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { supabase } from '@/lib/supabaseClient';
+import { generarEmbedding } from '@/lib/embeddings';
 import { SEXOS, SENAS, RAZAS } from '@/lib/opciones';
 import SelectorColor from '@/components/SelectorColor';
 import RecortarFoto from '@/components/RecortarFoto';

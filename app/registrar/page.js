@@ -144,8 +144,7 @@ export default function Registrar() {
 
       const { error: errorInsert } = await supabase
         .from('animales')
-        .insert([{ ...datos, foto_url: urls[0] || null, foto_urls: urls }]);
-
+        .insert([{ ...datos, foto_url: urls[0] || null, foto_urls: urls, embedding }]);
       if (errorInsert) throw errorInsert;
 
       setMensaje({ tipo: 'ok', texto: 'Caso registrado. Redirigiendo al tablón...' });

@@ -121,6 +121,13 @@ export default function Registrar() {
     };
 
     try {
+      let embedding = null;
+      try {
+        embedding = await generarEmbedding(fotos[0]);
+      } catch (errEmbedding) {
+        console.error('No se pudo analizar la foto para búsqueda visual:', errEmbedding);
+      }
+
       const urls = [];
 
       for (const archivo of fotos) {

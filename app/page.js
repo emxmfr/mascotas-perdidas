@@ -39,6 +39,44 @@ function ContenidoHome() {
   const [buscandoCerca, setBuscandoCerca] = useState(false);
   const [errorUbicacion, setErrorUbicacion] = useState('');
 
+  const [buscandoFoto, setBuscandoFoto] = useState(false);
+  const [resultadosFoto, setResultadosFoto] = useState(null);
+  const [errorFoto, setErrorFoto] = useState('');
+
+  async function buscarPorFoto(archivo) {
+    if (!archivo) return;
+    setBuscandoFoto(true);
+    setErrorFoto('');
+    try {
+      const { generarEmbedding } = await import('@/lib/embeddings');
+      const embedding = await generarEmbedding(archivo);
+
+      const { data, error } = await supabase.rpc('match_animales', {
+        query_embedding: embedding,
+        match_count: 12,
+      });
+      if (error) throw error;
+
+      const mapaSimilitud = new Map(data.map((r) => [r.id, r.similitud]));
+      const encontrados = animales
+        .filter((a) => mapaSimilitud.has(a.id))
+        .map((a) => ({ ...a, _similitud: mapaSimilitud.get(a.id) }))
+        .sort((a, b) => b._similitud - a._similitud);
+
+      setResultadosFoto(encontrados);
+    } catch (err) {
+      console.error(err);
+      setErrorFoto('No se pudo procesar la foto. Intenta con otra imagen.');
+    } finally {
+      setBuscandoFoto(false);
+    }
+  }
+
+  function limpiarBusquedaFoto() {
+    setResultadosFoto(null);
+    setErrorFoto('');
+  }
+
   useEffect(() => {
     async function cargar() {
       setCargando(true);
@@ -193,6 +231,27 @@ function ContenidoHome() {
           </button>
         </div>
 
+        <label className="boton-poster" style={{ cursor: 'pointer', display: 'inline-block' }}>
+          {buscandoFoto ? 'Analizando foto...' : '🔍 Buscar por foto'}
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            disabled={buscandoFoto}
+            onChange={(e) => {
+              const archivo = e.target.files?.[0];
+              if (archivo) buscarPorFoto(archivo);
+              e.target.value = '';
+            }}
+          />
+        </label>
+
+        {resultadosFoto && (
+          <button type="button" className="boton-poster" onClick={limpiarBusquedaFoto}>
+            ✕ Quitar búsqueda por foto
+          </button>
+        )}
+
         {!miUbicacion ? (
           <button type="button" className="boton-poster" onClick={buscarCerca} disabled={buscandoCerca}>
             {buscandoCerca ? 'Buscando...' : '📍 Ver casos cerca de mí'}
@@ -212,22 +271,34 @@ function ContenidoHome() {
         )}
       </div>
       {errorUbicacion && <p className="ayuda-fotos">{errorUbicacion}</p>}
+      {errorFoto && <p className="ayuda-fotos">{errorFoto}</p>}
+      {resultadosFoto && (
+        <p className="ayuda-fotos">
+          Mostrando los casos visualmente más parecidos a tu foto. No es una identificación exacta —
+          revisa cada caso antes de contactar.
+        </p>
+      )}
 
       {cargando && <p className="vacio">Cargando casos...</p>}
       {error && <p className="vacio">{error}</p>}
-      {!cargando && !error && filtrados.length === 0 && (
-        <p className="vacio">No hay casos registrados con estos filtros todavía.</p>
+      {!cargando && !error && (resultadosFoto ?? filtrados).length === 0 && (
+        <p className="vacio">
+          {resultadosFoto
+            ? 'No encontramos casos parecidos a esa foto todavía.'
+            : 'No hay casos registrados con estos filtros todavía.'}
+        </p>
       )}
 
       {vista === 'mapa' ? (
-        <MapaCasos animales={filtrados} onSeleccionar={setSeleccionado} />
+        <MapaCasos animales={resultadosFoto ?? filtrados} onSeleccionar={setSeleccionado} />
       ) : (
         <div className="rejilla">
-          {filtrados.map((animal) => (
+          {(resultadosFoto ?? filtrados).map((animal) => (
             <TarjetaAnimal
               key={animal.id}
               animal={animal}
               distanciaKm={animal._distancia}
+              similitud={animal._similitud}
               onClick={() => setSeleccionado(animal)}
             />
           ))}

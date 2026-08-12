@@ -192,7 +192,9 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal, telefon
               rel="noopener noreferrer"
               href={enlaceWhatsApp(`51${telefonoDueno}`, mensajeParaDueno)}
             >
-              Enviar detalles al dueño por WhatsApp
+              {estadoAnimal === 'encontrado' 
+                ? 'Enviar detalles a quien lo encontró por WhatsApp' 
+                : 'Enviar detalles al dueño por WhatsApp'}
             </a>
           ) : correoDueno ? (
             <a
@@ -202,7 +204,9 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal, telefon
                 `Huellitas Maleñas: información sobre ${animalNombre}`
               )}&body=${encodeURIComponent(mensajeParaDueno)}`}
             >
-              Enviar detalles al dueño por correo
+              {estadoAnimal === 'encontrado' 
+                ? 'Enviar detalles a quien lo encontró por correo' 
+                : 'Enviar detalles al dueño por correo'}
             </a>
           ) : (
             <p className="ayuda-fotos" style={{ margin: 0 }}>

@@ -628,6 +628,8 @@ a {
 .casilla input {
   margin: 0;
   flex-shrink: 0;
+  width: auto !important;
+  padding: 0;
 }
 
 .lista-senas {

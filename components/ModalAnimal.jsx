@@ -151,7 +151,13 @@ export default function ModalAnimal({ animal, onClose }) {
         </a>
 
         <div className="bloque-estado">
-          <Reportes animalId={animal.id} animalNombre={animal.nombre || animal.tipo} estadoAnimal={animal.estado} />
+          <Reportes
+            animalId={animal.id}
+            animalNombre={animal.nombre || animal.tipo}
+            estadoAnimal={animal.estado}
+            telefonoDueno={animal.telefono}
+            correoDueno={animal.contacto_otro && animal.contacto_otro.includes('@') ? animal.contacto_otro : null}
+          />
         </div>
       </div>
     </div>

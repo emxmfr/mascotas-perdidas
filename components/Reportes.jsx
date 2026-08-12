@@ -49,7 +49,7 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal, telefon
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: clave,
-          subject: `${tipoReporte === 'encontrado' ? '✅ ENCONTRADO' : '👀 Avistamiento'}: ${animalNombre || 'un caso'}`,
+          subject: `${tipoReporte === 'encontrado' ? 'ENCONTRADO' : 'Avistamiento'}: ${animalNombre || 'un caso'}`,
           from_name: 'Huellitas Maleñas',
           message:
             `Caso: ${animalNombre || 'Sin nombre'}\n` +
@@ -127,8 +127,8 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal, telefon
       setMensajeEstado({
         tipo: 'ok',
         texto: esEncontrado
-          ? '¡Gracias! Se lo notificamos directamente al equipo para que lo confirme.'
-          : '¡Gracias! Tu avistamiento ya está visible en el caso.',
+          ? 'Gracias. Se lo notificamos directamente al equipo para que lo confirme.'
+          : 'Gracias. Tu avistamiento ya está visible en el caso.',
       });
       cargarReportes();
     } catch (err) {
@@ -140,7 +140,7 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal, telefon
 
   const origen = typeof window !== 'undefined' ? window.location.origin : '';
   const mensajeParaDueno = reporteEnviado
-    ? `Hola! Te escribo desde Huellitas Maleñas 🐾\n\n` +
+    ? `Hola. Te escribo desde Huellitas Maleñas\n\n` +
       `En Huellitas Maleñas alguien reportó información sobre "${animalNombre}":\n"${reporteEnviado.mensaje}"\n\n` +
       (reporteEnviado.contacto ? `Contacto de quien reportó: ${reporteEnviado.contacto}\n\n` : '') +
       `Revisa el caso completo aquí: ${origen}/?caso=${animalId}`
@@ -162,7 +162,7 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal, telefon
         {reportes.map((r) => (
           <li key={r.id} className={`reporte ${r.tipo}`}>
             <div className="reporte-cabecera">
-              <span>👀 Avistamiento</span>
+              <span>Avistamiento</span>
               <span>
                 {new Date(r.creado_en).toLocaleString('es', {
                   day: '2-digit',
@@ -185,24 +185,24 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal, telefon
         <div className="mensaje ok" style={{ marginTop: 4 }}>
           <p style={{ margin: '0 0 10px' }}>{mensajeEstado.texto}</p>
           {telefonoDueno ? (
-            
+            <a
               className="boton-poster rojo"
               style={{ width: '100%', textAlign: 'center', display: 'block' }}
               target="_blank"
               rel="noopener noreferrer"
               href={enlaceWhatsApp(`51${telefonoDueno}`, mensajeParaDueno)}
             >
-              📲 Enviar detalles al dueño por WhatsApp
+              Enviar detalles al dueño por WhatsApp
             </a>
           ) : correoDueno ? (
-            
+            <a
               className="boton-poster"
               style={{ width: '100%', textAlign: 'center', display: 'block' }}
               href={`mailto:${correoDueno}?subject=${encodeURIComponent(
                 `Huellitas Maleñas: información sobre ${animalNombre}`
               )}&body=${encodeURIComponent(mensajeParaDueno)}`}
             >
-              ✉️ Enviar detalles al dueño por correo
+              Enviar detalles al dueño por correo
             </a>
           ) : (
             <p className="ayuda-fotos" style={{ margin: 0 }}>
@@ -215,7 +215,7 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal, telefon
 
       {estadoAnimal === 'en_casa' ? (
         <p className="ayuda-fotos" style={{ marginTop: 8 }}>
-          🎉 Este caso ya se resolvió, ¡gracias a todos los que ayudaron! Ya no se aceptan más reportes.
+          Este caso ya se resolvió, gracias a todos los que ayudaron. Ya no se aceptan más reportes.
         </p>
       ) : !mostrarForm ? (
         <button type="button" className="boton-poster" onClick={() => setMostrarForm(true)}>

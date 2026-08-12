@@ -3,17 +3,20 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { TIPOS_REPORTE } from '@/lib/opciones';
+import { enlaceWhatsApp } from '@/lib/ubicacion';
 
-export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
+export default function Reportes({ animalId, animalNombre, estadoAnimal, telefonoDueno, correoDueno }) {
   const [reportes, setReportes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [mostrarForm, setMostrarForm] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [mensajeEstado, setMensajeEstado] = useState(null);
+  const [reporteEnviado, setReporteEnviado] = useState(null);
 
   const [tipo, setTipo] = useState('avistamiento');
   const [mensaje, setMensaje] = useState('');
-  const [contacto, setContacto] = useState('');
+  const [contactoWhatsapp, setContactoWhatsapp] = useState('');
+  const [contactoCorreo, setContactoCorreo] = useState('');
   const [evidencia, setEvidencia] = useState(null);
 
   async function cargarReportes() {
@@ -32,6 +35,10 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
     cargarReportes();
   }, [animalId]);
 
+  function manejarWhatsapp(valor) {
+    setContactoWhatsapp(valor.replace(/\D/g, '').slice(0, 9));
+  }
+
   async function notificarPorCorreo({ tipoReporte, mensajeTexto, contactoTexto, evidenciaUrl }) {
     const clave = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
     if (!clave) return;
@@ -43,7 +50,7 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
         body: JSON.stringify({
           access_key: clave,
           subject: `${tipoReporte === 'encontrado' ? '✅ ENCONTRADO' : '👀 Avistamiento'}: ${animalNombre || 'un caso'}`,
-          from_name: 'Mascotas Perdidas',
+          from_name: 'Huellitas Maleñas',
           message:
             `Caso: ${animalNombre || 'Sin nombre'}\n` +
             `Tipo de reporte: ${tipoReporte === 'encontrado' ? 'Ya fue encontrado' : 'Avistamiento'}\n` +
@@ -82,12 +89,18 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
         evidencia_url = data.publicUrl;
       }
 
+      const contactoPartes = [
+        contactoWhatsapp ? `WhatsApp: ${contactoWhatsapp}` : null,
+        contactoCorreo.trim() ? `Correo: ${contactoCorreo.trim()}` : null,
+      ].filter(Boolean);
+      const contactoGuardado = contactoPartes.join(' · ') || null;
+
       const { error } = await supabase.from('avistamientos').insert([
         {
           animal_id: animalId,
           tipo,
           mensaje: mensaje.trim(),
-          contacto: contacto.trim() || null,
+          contacto: contactoGuardado,
           evidencia_url,
         },
       ]);
@@ -97,14 +110,17 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
       notificarPorCorreo({
         tipoReporte: tipo,
         mensajeTexto: mensaje.trim(),
-        contactoTexto: contacto.trim(),
+        contactoTexto: contactoGuardado,
         evidenciaUrl: evidencia_url,
       });
 
       const esEncontrado = tipo === 'encontrado';
 
+      setReporteEnviado({ mensaje: mensaje.trim(), contacto: contactoGuardado });
+
       setMensaje('');
-      setContacto('');
+      setContactoWhatsapp('');
+      setContactoCorreo('');
       setEvidencia(null);
       setTipo('avistamiento');
       setMostrarForm(false);
@@ -121,6 +137,14 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
       setEnviando(false);
     }
   }
+
+  const origen = typeof window !== 'undefined' ? window.location.origin : '';
+  const mensajeParaDueno = reporteEnviado
+    ? `Hola! Te escribo desde Huellitas Maleñas 🐾\n\n` +
+      `En Huellitas Maleñas alguien reportó información sobre "${animalNombre}":\n"${reporteEnviado.mensaje}"\n\n` +
+      (reporteEnviado.contacto ? `Contacto de quien reportó: ${reporteEnviado.contacto}\n\n` : '') +
+      `Revisa el caso completo aquí: ${origen}/?caso=${animalId}`
+    : '';
 
   return (
     <div className="bloque-reportes">
@@ -157,6 +181,38 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
         ))}
       </ul>
 
+      {mensajeEstado?.tipo === 'ok' && reporteEnviado && (
+        <div className="mensaje ok" style={{ marginTop: 4 }}>
+          <p style={{ margin: '0 0 10px' }}>{mensajeEstado.texto}</p>
+          {telefonoDueno ? (
+            
+              className="boton-poster rojo"
+              style={{ width: '100%', textAlign: 'center', display: 'block' }}
+              target="_blank"
+              rel="noopener noreferrer"
+              href={enlaceWhatsApp(`51${telefonoDueno}`, mensajeParaDueno)}
+            >
+              📲 Enviar detalles al dueño por WhatsApp
+            </a>
+          ) : correoDueno ? (
+            
+              className="boton-poster"
+              style={{ width: '100%', textAlign: 'center', display: 'block' }}
+              href={`mailto:${correoDueno}?subject=${encodeURIComponent(
+                `Huellitas Maleñas: información sobre ${animalNombre}`
+              )}&body=${encodeURIComponent(mensajeParaDueno)}`}
+            >
+              ✉️ Enviar detalles al dueño por correo
+            </a>
+          ) : (
+            <p className="ayuda-fotos" style={{ margin: 0 }}>
+              Quien registró este caso no dejó una forma directa de contactarlo, pero tu reporte ya
+              quedó visible más arriba.
+            </p>
+          )}
+        </div>
+      )}
+
       {estadoAnimal === 'en_casa' ? (
         <p className="ayuda-fotos" style={{ marginTop: 8 }}>
           🎉 Este caso ya se resolvió, ¡gracias a todos los que ayudaron! Ya no se aceptan más reportes.
@@ -167,7 +223,7 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
         </button>
       ) : (
         <form className="form-reporte" onSubmit={enviarReporte}>
-          {mensajeEstado && <div className={`mensaje ${mensajeEstado.tipo}`}>{mensajeEstado.texto}</div>}
+          {mensajeEstado?.tipo === 'error' && <div className="mensaje error">{mensajeEstado.texto}</div>}
 
           <div className="campo">
             <label>Tipo de reporte</label>
@@ -196,14 +252,26 @@ export default function Reportes({ animalId, animalNombre, estadoAnimal }) {
             />
           </div>
 
-          <div className="campo">
-            <label>Tu contacto (opcional, por si necesitan más info)</label>
-            <input
-              type="text"
-              placeholder="Teléfono, email o red social"
-              value={contacto}
-              onChange={(e) => setContacto(e.target.value)}
-            />
+          <div className="fila-doble">
+            <div className="campo">
+              <label>Tu WhatsApp (opcional, 9 dígitos)</label>
+              <input
+                type="tel"
+                inputMode="numeric"
+                placeholder="9XXXXXXXX"
+                value={contactoWhatsapp}
+                onChange={(e) => manejarWhatsapp(e.target.value)}
+              />
+            </div>
+            <div className="campo">
+              <label>O tu correo (opcional)</label>
+              <input
+                type="email"
+                placeholder="correo@ejemplo.com"
+                value={contactoCorreo}
+                onChange={(e) => setContactoCorreo(e.target.value)}
+              />
+            </div>
           </div>
 
           <div style={{ display: 'flex', gap: 8 }}>
